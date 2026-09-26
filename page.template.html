@@ -3,213 +3,715 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>FallKard — open your kard, become a sovereign node</title>
-<meta name="description" content="FallKard is the entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to instantiate your own sovereign node — your structure, your look, your memory, on your metal — run it cheap, and join the mesh. One kard at a time.">
+<title>FallKard — pull a kard, open your world</title>
+<meta name="description" content="FallKard turns the tools you use into something you own. Get a kard, open it, and your own workspace appears — on your machine, in a look you choose. No account, no monthly rent. Pick your look from a locker of skins. It's yours.">
+<link rel="canonical" href="https://sjgant80-hub.github.io/sovereign-node/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap">
 <!--SCHEMA-->
 <style>
 :root{
-  --bg:#080a0f; --bg2:#0c0f16; --panel:#11151e; --panel2:#161b26; --ink:#eef2f8; --muted:#9aa6b8; --faint:#69748a;
-  --line:#1f2634; --line2:#2b3444; --accent:#7cf3d0; --accent2:#5aa0ff; --accent-ink:#04140f;
-  --gold:#e9c46a; --warn:#f0a35e; --bad:#f8776b; --good:#54d68a;
-  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* ── surfaces ── */
+  --bg:#06070d; --bg2:#080a12; --panel:#0c1020; --panel2:#111731; --panel3:#0a0e1c;
+  --ink:#eef2fb; --muted:#a3b1cc; --faint:#65728e;
+  --line:#1a2338; --line2:#28344f; --line3:#3a496b;
+  /* ── house accents (holo) ── */
+  --c1:#7cf3d0; --c2:#5aa0ff; --c3:#b98cff; --gold:#f2c66b; --accent-ink:#04140f;
+  --good:#54d68a; --bad:#ff5d6c; --warn:#f2a65a;
+  /* ── loot rarity language (Diablo/WoW/Destiny universal) ── */
+  --r-common:#c9d1d9; --r-uncommon:#1eff00; --r-rare:#0070dd; --r-epic:#a335ee;
+  --r-legendary:#e6a919; --r-exotic:#ceae33;
+  /* ── type ── */
+  --disp:'Space Grotesk',system-ui,sans-serif;
   --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  --disp:'Fraunces',Georgia,serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --serif:'Fraunces',Georgia,serif;
+  --tech:'Rajdhani',var(--disp);
+  --holo:linear-gradient(100deg,var(--c1),var(--c2) 42%,var(--c3) 74%,var(--gold));
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html,body{margin:0}
-body{background:radial-gradient(1200px 700px at 70% -10%, #10202a 0%, var(--bg) 55%) no-repeat, var(--bg);
-  color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1000px;margin:0 auto;padding:0 18px}
-a{color:var(--accent)}
-h1,h2,h3{font-family:var(--disp);font-weight:600;text-wrap:balance;margin:0}
+html,body{margin:0;max-width:100%;overflow-x:hidden}
+body{
+  background:
+    radial-gradient(1100px 620px at 78% -8%, rgba(90,160,255,.16), transparent 60%),
+    radial-gradient(900px 560px at 8% 12%, rgba(185,140,255,.12), transparent 55%),
+    radial-gradient(1200px 800px at 50% 120%, rgba(124,243,208,.10), transparent 60%),
+    var(--bg);
+  color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:15.5px;
+  -webkit-font-smoothing:antialiased;position:relative;
+}
+/* faint dot-grid atmosphere */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(rgba(120,150,210,.10) 1px, transparent 1px);
+  background-size:34px 34px;
+  -webkit-mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 78%);
+  mask-image:radial-gradient(circle at 50% 30%, #000 0%, transparent 78%);
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+a{color:var(--c1);text-decoration:none}
+a:hover{color:#fff}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+h1,h2{font-family:var(--disp);font-weight:700;letter-spacing:-.02em}
 code,.mono{font-family:var(--mono)}
-.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+.eyebrow{font-family:var(--tech);font-weight:600;font-size:14px;letter-spacing:.34em;text-transform:uppercase;
+  color:transparent;background:var(--holo);-webkit-background-clip:text;background-clip:text}
+:focus-visible{outline:2px solid var(--c1);outline-offset:2px;border-radius:6px}
 
-/* hero */
-.hero{padding:66px 0 30px}
-.hero h1{font-size:clamp(38px,7vw,72px);line-height:.99;letter-spacing:-.015em;margin:16px 0 0}
-.hero h1 .g{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero .lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:64ch;margin:20px 0 0}
-.flowline{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;align-items:center;font-family:var(--mono);font-size:13px}
-.flowline .step{border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);color:var(--ink)}
-.flowline .arw{color:var(--faint)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
-.chip{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;background:var(--panel)}
-.chip b{color:var(--ink);font-weight:500}
+/* ── buttons ── */
+button{font-family:var(--tech);font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--accent-ink);background:var(--holo);background-size:180% 100%;
+  border:0;border-radius:11px;padding:12px 20px;cursor:pointer;transition:.16s ease;position:relative;
+  box-shadow:0 8px 22px rgba(90,160,255,.22)}
+button:hover{background-position:100% 0;transform:translateY(-1px);box-shadow:0 12px 30px rgba(124,243,208,.30)}
+button:active{transform:translateY(0)}
+button.ghost{background:rgba(255,255,255,.02);color:var(--ink);border:1px solid var(--line2);box-shadow:none;font-weight:600}
+button.ghost:hover{border-color:var(--c1);color:#fff;background:rgba(124,243,208,.06)}
+button.danger.ghost:hover{border-color:var(--bad);color:#fff;background:rgba(255,93,108,.08)}
+button:disabled{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;filter:saturate(.4)}
 
-section{padding:30px 0;border-top:1px solid var(--line)}
-.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
-.sec-head h2{font-size:26px}
-.sec-num{font-family:var(--mono);font-size:12px;color:var(--faint)}
-.sec-sub{color:var(--muted);max-width:70ch;margin:0 0 20px}
+/* ── hero ── */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:38px;align-items:center;padding:58px 0 20px}
+@media(max-width:900px){.hero{grid-template-columns:1fr;gap:26px;padding:40px 0 8px}}
+.hero h1{font-size:clamp(40px,7.2vw,76px);line-height:.98;margin:16px 0 0}
+.hero h1 .g{background:var(--holo);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:clamp(16.5px,2.3vw,20px);color:var(--muted);max-width:56ch;margin:20px 0 0}
+.hero .lede b{color:var(--ink);font-weight:600}
+.loop{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px;align-items:center;font-family:var(--tech);
+  font-weight:600;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase}
+.loop .s{border:1px solid var(--line2);border-radius:999px;padding:8px 15px;background:rgba(255,255,255,.02);color:var(--ink)}
+.loop .s b{color:var(--c1);font-weight:700}
+.loop .a{color:var(--faint)}
+.trust{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.trust .t{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;background:rgba(255,255,255,.015);display:inline-flex;gap:7px;align-items:center}
+.trust .t::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good)}
+.trust .t b{color:var(--ink);font-weight:500}
+.hero-card{display:flex;justify-content:center}
+@media(max-width:900px){.hero-card{margin-top:6px}}
 
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:760px){.grid2{grid-template-columns:1fr}}
-.label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
-.kv{font-family:var(--mono);font-size:12.5px;color:var(--muted);word-break:break-all;line-height:1.75}
-.kv b{color:var(--ink);font-weight:500}
-button{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--accent-ink);background:var(--accent);
-  border:1px solid var(--accent);border-radius:10px;padding:10px 15px;cursor:pointer;transition:.13s}
-button:hover{filter:brightness(1.08)}
-button.ghost{background:transparent;color:var(--ink);border-color:var(--line2);font-weight:500}
-button.ghost:hover{border-color:var(--accent);color:#fff}
-button:disabled{opacity:.4;cursor:not-allowed}
-.controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
-.verdict{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);margin-top:12px}
-.dot{width:12px;height:12px;border-radius:50%;flex:none}
-.st{font-family:var(--disp);font-size:20px;font-weight:600}
-.ok{color:var(--good)} .bg-ok{background:var(--good)} .no{color:var(--bad)} .bg-no{background:var(--bad)}
-.big{font-family:var(--disp);font-size:44px;font-weight:600;line-height:1}
-.meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+/* ── THE LOOT KARD ── */
+.kardstage{perspective:1400px;width:min(320px,86vw)}
+.kard{
+  --tier:var(--r-exotic); --tier2:var(--r-legendary); --spin:130deg;
+  position:relative;width:100%;aspect-ratio:5/7;border-radius:20px;padding:2.5px;
+  background:conic-gradient(from var(--spin,120deg),var(--tier2),var(--tier),#fff8dc,var(--tier2),var(--tier));
+  box-shadow:0 24px 60px rgba(0,0,0,.55), 0 0 34px -6px var(--tier), inset 0 0 0 1px rgba(255,255,255,.06);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .4s;
+  transform-style:preserve-3d;will-change:transform;
+}
+.kard.float{animation:kfloat 6s ease-in-out infinite}
+@keyframes kfloat{0%,100%{transform:translateY(0) rotateX(0) rotateY(0)}50%{transform:translateY(-10px)}}
+.kard.pull{animation:kpull .7s cubic-bezier(.2,.9,.2,1)}
+@keyframes kpull{0%{transform:translateY(40px) rotateY(38deg) scale(.86);opacity:0}60%{opacity:1}100%{transform:translateY(0) rotateY(0) scale(1);opacity:1}}
+.kard.summon{animation:ksummon .9s ease}
+@keyframes ksummon{0%{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 0 0 var(--tier)}40%{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 60px 14px var(--tier)}100%{box-shadow:0 24px 60px rgba(0,0,0,.55),0 0 34px -6px var(--tier)}}
+.kard.refuse{animation:kshake .5s}
+@keyframes kshake{10%,90%{transform:translateX(-3px)}20%,80%{transform:translateX(5px)}30%,50%,70%{transform:translateX(-8px)}40%,60%{transform:translateX(8px)}}
+.kard__inner{position:relative;height:100%;border-radius:17px;overflow:hidden;
+  background:linear-gradient(170deg,#141a30 0%,#0a0e1c 46%,#0c1226 100%);
+  display:flex;flex-direction:column;padding:15px 15px 13px}
+.kard__inner::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 60% at 50% -6%, color-mix(in srgb,var(--tier) 22%,transparent), transparent 60%)}
+/* holo shine sweep on hover */
+.kard__sheen{position:absolute;inset:0;pointer-events:none;overflow:hidden;border-radius:17px;z-index:4}
+.kard__sheen::after{content:"";position:absolute;top:-60%;left:-120%;width:70%;height:220%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.42),transparent);transform:rotate(8deg);
+  transition:left .7s ease}
+.kardstage:hover .kard__sheen::after,.kard.pull .kard__sheen::after{left:130%}
+.kard__top{display:flex;align-items:center;justify-content:space-between;gap:8px;z-index:2}
+.kard__tier{font-family:var(--tech);font-weight:700;font-size:12.5px;letter-spacing:.22em;
+  color:var(--tier);text-shadow:0 0 12px color-mix(in srgb,var(--tier) 55%,transparent)}
+.kard__kind{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;color:var(--faint);text-transform:uppercase}
+.kard__art{position:relative;margin:10px auto 6px;width:118px;height:118px;border-radius:16px;z-index:2;
+  display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 40%, color-mix(in srgb,var(--tier) 20%,#0b1020), #070a14 72%);
+  border:1px solid color-mix(in srgb,var(--tier) 40%,var(--line2));
+  box-shadow:inset 0 0 26px rgba(0,0,0,.6), 0 0 20px -8px var(--tier)}
+.kard__art svg{width:96px;height:96px;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--tier) 55%,transparent))}
+.kard__name{font-family:var(--disp);font-weight:600;font-size:16px;text-align:center;margin-top:4px;z-index:2}
+.kard__serial{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;margin-top:2px;z-index:2;word-break:break-all}
+.kard__affixes{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin:9px 0 0;z-index:2}
+.kard__affixes span{font-family:var(--mono);font-size:9.5px;color:var(--c1);border:1px solid color-mix(in srgb,var(--c1) 34%,var(--line2));
+  border-radius:6px;padding:3px 7px;background:rgba(124,243,208,.05)}
+.kard__stat{margin-top:auto;padding-top:10px;z-index:2}
+.kard__statrow{display:flex;justify-content:space-between;font-family:var(--tech);font-weight:600;
+  font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.kard__statrow b{color:var(--gold);font-size:13px}
+.kard__bar{height:8px;border-radius:99px;background:#080b16;border:1px solid var(--line2);overflow:hidden}
+.kard__bar i{display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--tier),#fff3c4);box-shadow:0 0 12px var(--tier);
+  transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.kard__seal{display:flex;align-items:center;gap:6px;justify-content:center;margin-top:11px;z-index:2;
+  font-family:var(--mono);font-size:9.5px;color:var(--faint);word-break:break-all;text-align:center}
+.kard__seal .ok{color:var(--good)}
+.kard.is-empty .kard__real{display:none}
+.kard:not(.is-empty) .kard__empty{display:none}
+.kard__empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;z-index:2}
+.kard__empty .rune{font-family:var(--serif);font-size:52px;color:var(--faint);opacity:.5;margin-bottom:8px}
+.kard__empty p{color:var(--faint);font-family:var(--tech);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:13px;margin:0}
 
-/* the two faces */
-.faces{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
-@media(max-width:760px){.faces{grid-template-columns:1fr}}
-.face{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel2)}
-.face .cap{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:10px 12px 0}
-.stage{padding:12px;min-height:210px}
+/* ── sections ── */
+section{padding:44px 0;border-top:1px solid var(--line)}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:8px}
+.sec-head .num{font-family:var(--tech);font-weight:700;font-size:13px;letter-spacing:.2em;color:var(--accent-ink);
+  background:var(--holo);border-radius:8px;padding:4px 10px}
+.sec-head h2{font-size:clamp(24px,3.6vw,32px)}
+.sec-sub{color:var(--muted);max-width:74ch;margin:0 0 24px;font-size:15.5px}
+.sec-sub b{color:var(--ink);font-weight:600}
 
-/* the weave shelf */
+/* ── value / kill-story ── */
+.value{display:grid;grid-template-columns:1.25fr 1fr;gap:18px}
+@media(max-width:820px){.value{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006));
+  border:1px solid var(--line);border-radius:18px;padding:24px;position:relative;overflow:hidden}
+.card.hi{border-color:color-mix(in srgb,var(--c2) 30%,var(--line2));
+  box-shadow:0 0 0 1px rgba(90,160,255,.08),0 20px 50px -30px rgba(90,160,255,.5)}
+.card .k{font-family:var(--tech);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--c1);margin-bottom:10px}
+.card h3{font-family:var(--disp);font-weight:600;font-size:22px;margin:0 0 10px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--muted);font-size:15px}
+.card p b,.card li b{color:var(--ink);font-weight:600}
+.kill{list-style:none;margin:6px 0 0;padding:0}
+.kill li{position:relative;padding:9px 0 9px 30px;color:var(--muted);font-size:14.5px;border-top:1px solid var(--line)}
+.kill li:first-child{border-top:0}
+.kill li::before{content:"−";position:absolute;left:4px;top:9px;color:var(--bad);font-family:var(--tech);font-weight:700;font-size:18px;line-height:1.2}
+.killnote{margin-top:16px;font-family:var(--tech);font-weight:600;letter-spacing:.04em;color:var(--gold);font-size:15px}
+.who{display:grid;gap:14px;margin-top:2px}
+.who .row{display:flex;gap:14px;align-items:flex-start}
+.who .badge{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;
+  font-family:var(--serif);font-size:22px;color:var(--accent-ink);background:var(--holo);box-shadow:0 6px 18px -6px var(--c2)}
+.who h4{font-family:var(--disp);font-weight:600;font-size:16.5px;margin:2px 0 4px}
+.who p{color:var(--muted);font-size:14px;margin:0}
+
+/* ── the live spine ── */
+.spine{display:grid;grid-template-columns:340px 1fr;gap:26px;align-items:start}
+@media(max-width:820px){.spine{grid-template-columns:1fr;gap:22px}.kardstage{margin:0 auto}}
+.ritual{display:flex;flex-direction:column;gap:14px}
+.rstep{background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.006));
+  border:1px solid var(--line);border-radius:15px;padding:16px 18px;transition:.25s;position:relative}
+.rstep.on{border-color:color-mix(in srgb,var(--c1) 34%,var(--line2));box-shadow:0 0 0 1px rgba(124,243,208,.10)}
+.rstep.locked{opacity:.5}
+.rstep .h{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.rstep .dot{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-family:var(--tech);
+  font-weight:700;font-size:12px;color:var(--faint);border:1px solid var(--line2);background:#0a0e1c}
+.rstep.on .dot,.rstep.done .dot{color:var(--accent-ink);background:var(--holo);border-color:transparent}
+.rstep h3{font-family:var(--disp);font-weight:600;font-size:16.5px}
+.rstep .sub{font-family:var(--mono);font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+.rstep p{margin:2px 0 12px;color:var(--muted);font-size:13.5px}
+.rstep .controls{display:flex;flex-wrap:wrap;gap:9px}
+.rstep button{font-size:13px;padding:10px 15px}
+.readout{margin-top:12px}
+.verdict{display:flex;align-items:center;gap:11px;padding:12px 14px;border-radius:12px;
+  border:1px solid var(--line2);background:#0a0e1c}
+.verdict .vd{width:11px;height:11px;border-radius:50%;flex:none}
+.verdict .vs{font-family:var(--tech);font-weight:700;font-size:16px;letter-spacing:.06em;text-transform:uppercase}
+.ok{color:var(--good)} .bg-ok{background:var(--good);box-shadow:0 0 12px var(--good)}
+.no{color:var(--bad)} .bg-no{background:var(--bad);box-shadow:0 0 12px var(--bad)}
+.meta{font-family:var(--mono);font-size:11.5px;color:var(--muted);line-height:1.6}
+.meta b{color:var(--ink);font-weight:500}
+/* animated bars for budget + cheap */
+.gbar{height:12px;border-radius:99px;background:#080b16;border:1px solid var(--line2);overflow:hidden;margin-top:10px;position:relative}
+.gbar i{display:block;height:100%;width:0;border-radius:99px;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.gbar i.fill-ok{background:linear-gradient(90deg,var(--c1),var(--good));box-shadow:0 0 14px var(--good)}
+.gbar i.fill-no{background:linear-gradient(90deg,var(--warn),var(--bad));box-shadow:0 0 14px var(--bad)}
+.gbar .wall{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.gbar.hit{animation:kshake .4s}
+.bignum{font-family:var(--disp);font-weight:700;font-size:46px;line-height:1;color:var(--good);
+  text-shadow:0 0 26px rgba(84,214,138,.45)}
+.cheapbars{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.cheapbars .cb{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.cheapbars .cb .lab{width:64px;flex:none;text-transform:uppercase;letter-spacing:.06em}
+.cheapbars .cb .track{flex:1;height:10px;border-radius:99px;background:#080b16;border:1px solid var(--line2);overflow:hidden}
+.cheapbars .cb .track i{display:block;height:100%;width:0;border-radius:99px;transition:width .9s ease}
+.cheapbars .cb.full .track i{background:linear-gradient(90deg,var(--line3),var(--faint))}
+.cheapbars .cb.cheap .track i{background:linear-gradient(90deg,var(--c1),var(--c2));box-shadow:0 0 12px rgba(90,160,255,.4)}
+.cheapbars .cb .n{width:34px;text-align:right;color:var(--ink)}
+
+/* ── the locker (two faces) ── */
+.faces{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:820px){.faces{grid-template-columns:1fr}}
+.face{border:1px solid var(--line2);border-radius:18px;overflow:hidden;background:#05070d;
+  box-shadow:0 20px 50px -34px #000}
+.face__bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:11px 13px;
+  background:rgba(255,255,255,.02);border-bottom:1px solid var(--line)}
+.face__lab{font-family:var(--tech);font-weight:600;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.face__name{font-family:var(--disp);font-weight:600;font-size:15px;color:var(--ink)}
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;padding:11px 13px 3px}
+.skinchip{font-family:var(--tech);font-weight:600;font-size:11.5px;letter-spacing:.04em;
+  border:1px solid var(--line2);border-radius:8px;padding:5px 10px;background:rgba(255,255,255,.02);
+  color:var(--muted);cursor:pointer;text-transform:none;box-shadow:none}
+.skinchip:hover{border-color:var(--c1);color:#fff;transform:none}
+.skinchip.active{background:var(--holo);color:var(--accent-ink);border-color:transparent}
+.stage{padding:13px;min-height:340px}
+.locker-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.locker-note{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:14px}
+
+/* ── weave shelf ── */
 .weave{display:flex;flex-direction:column;gap:12px}
-.stagecard{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;border:1px solid var(--line);
-  border-radius:14px;padding:16px 18px;background:var(--panel)}
-.stagecard .n{font-family:var(--mono);font-size:13px;color:var(--accent);width:70px}
-.stagecard h3{font-size:18px;font-family:var(--sans);font-weight:600;margin:0 0 3px}
+.stagecard{display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;
+  border:1px solid var(--line);border-radius:15px;padding:16px 18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.026),rgba(255,255,255,.004));transition:.2s}
+.stagecard:hover{border-color:var(--line3);transform:translateX(2px)}
+.stagecard .n{font-family:var(--tech);font-weight:700;font-size:22px;color:transparent;
+  background:var(--holo);-webkit-background-clip:text;background-clip:text}
+.stagecard h3{font-family:var(--disp);font-weight:600;font-size:17px;margin:0 0 3px}
 .stagecard p{margin:0;color:var(--muted);font-size:13.5px}
-.stagecard .organs{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
-.stagecard .organs a{font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:3px 9px;background:var(--panel2)}
-.stagecard .organs a:hover{border-color:var(--accent);color:var(--ink)}
-.stagecard .spine{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);align-self:start}
-.stagecard .backbone{color:var(--gold)}
+.stagecard .organs{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+.stagecard .organs a{font-family:var(--mono);font-size:11.5px;color:var(--muted);border:1px solid var(--line2);
+  border-radius:8px;padding:4px 10px;background:rgba(255,255,255,.015)}
+.stagecard .organs a:hover{border-color:var(--c1);color:#fff}
+.stagecard .tag{font-family:var(--tech);font-weight:600;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--c1);align-self:start}
+.stagecard .tag.backbone{color:var(--gold)}
 
-.how{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:4px}
-@media(max-width:760px){.how{grid-template-columns:1fr}}
-.how .b{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
-.how .b h3{font-size:15px;font-family:var(--sans);font-weight:600;margin:0 0 6px}
-.how .b p{margin:0;color:var(--muted);font-size:13.5px}
-.honest{border:1px solid var(--line2);border-radius:14px;padding:18px;background:linear-gradient(180deg,var(--panel2),var(--panel));margin-top:6px}
-.honest .label{color:var(--warn)}
-.honest ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px}
-.honest li{margin:5px 0}
+/* ── how + honest + builders ── */
+.how{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+@media(max-width:700px){.how{grid-template-columns:1fr}}
+.how .b{background:linear-gradient(180deg,rgba(255,255,255,.026),rgba(255,255,255,.004));
+  border:1px solid var(--line);border-radius:14px;padding:18px}
+.how .b h3{font-family:var(--disp);font-weight:600;font-size:16px;margin:0 0 6px}
+.how .b p{margin:0;color:var(--muted);font-size:14px}
+.honest{border:1px solid var(--line2);border-radius:16px;padding:20px;
+  background:linear-gradient(180deg,rgba(242,166,90,.05),rgba(255,255,255,.006));margin-top:16px}
+.honest .k{color:var(--warn);font-family:var(--tech);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px;margin-bottom:8px}
+.honest ul{margin:0;padding-left:20px;color:var(--muted);font-size:14px}
+.honest li{margin:6px 0}
+.honest b{color:var(--ink);font-weight:600}
+.builders{margin-top:16px;border:1px dashed var(--line2);border-radius:16px;padding:20px;background:rgba(90,160,255,.03)}
+.builders .k{color:var(--c2);font-family:var(--tech);font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:13px;margin-bottom:10px}
+.builders .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 22px}
+@media(max-width:640px){.builders .grid{grid-template-columns:1fr}}
+.builders .grid div{font-size:13.5px;color:var(--muted)}
+.builders .grid b{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:12.5px}
 
-footer{border-top:1px solid var(--line);padding:32px 0 64px;color:var(--faint);font-size:13px}
-footer .prov{color:var(--muted);margin-top:8px;font-size:12.5px;line-height:1.6;max-width:80ch}
-footer b{color:var(--ink);font-weight:500}
+/* ── FAQ ── */
+.faq{display:flex;flex-direction:column;gap:10px}
+.faq details{border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.015);overflow:hidden}
+.faq details[open]{border-color:var(--line3)}
+.faq summary{cursor:pointer;list-style:none;padding:15px 18px;font-family:var(--disp);font-weight:600;font-size:16px;
+  display:flex;justify-content:space-between;gap:12px;align-items:center}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--tech);font-weight:700;color:var(--c1);font-size:22px;transition:.2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq .a{padding:0 18px 16px;color:var(--muted);font-size:14.5px}
+
+footer{border-top:1px solid var(--line);padding:34px 0 70px;color:var(--faint);font-size:13px}
+footer .brandline{font-family:var(--disp);font-weight:600;color:var(--ink);font-size:15px}
+footer .prov{color:var(--muted);margin-top:10px;font-size:12.5px;line-height:1.7;max-width:82ch}
+footer b{color:var(--ink);font-weight:600}
 .hidden{display:none!important}
+
+/* ═══════════════ THE RENDERED WORKSPACE (structure × skin) ═══════════════ */
+.rendered-app{
+  --knm-radius-sm:4px; --knm-radius-md:8px; --knm-radius-lg:16px;
+  font-family:var(--knm-font-family,sans-serif);font-size:var(--knm-font-size,14px);
+  background:var(--knm-bg);color:var(--knm-text);min-height:314px;display:flex;width:100%;
+  border-radius:12px;overflow:hidden;position:relative;isolation:isolate}
+.rendered-app.layout-topbar,.rendered-app.layout-dock,.rendered-app.layout-commandk{flex-direction:column}
+.rendered-app *{box-sizing:border-box}
+.rendered-app a{color:inherit}
+.knm-content{flex:1;min-width:0;padding:calc(var(--knm-space) * 2.2)}
+.knm-content-inner{display:flex;flex-direction:column;gap:calc(var(--knm-space) * 2.2)}
+.knm-section{scroll-margin-top:12px;border-radius:var(--knm-radius-md);transition:outline-color .2s ease}
+.knm-section.knm-highlight{outline:2px solid var(--knm-accent);outline-offset:3px}
+.knm-panel-heading{font-size:.7rem;text-transform:uppercase;letter-spacing:.09em;color:var(--knm-text-muted);margin:0 0 8px;font-weight:700}
+.knm-fallback-note{font-size:.66rem;color:var(--knm-text-muted);background:var(--knm-surface-alt);
+  border:1px dashed var(--knm-border);border-radius:6px;padding:4px 7px;margin-bottom:8px}
+/* nav */
+.knm-nav{font-size:.9em}
+.knm-nav--sidebar{width:140px;flex-shrink:0;background:var(--knm-surface);border-right:1px solid var(--knm-border);
+  padding:calc(var(--knm-space)*1.6);display:flex;flex-direction:column;gap:5px}
+.knm-nav--sidebar .knm-nav-brand{font-weight:700;margin-bottom:10px;color:var(--knm-text)}
+.knm-nav--topbar{width:100%;background:var(--knm-surface);border-bottom:1px solid var(--knm-border);
+  padding:calc(var(--knm-space)*1.2) calc(var(--knm-space)*1.6);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.knm-nav--dock{width:100%;display:flex;justify-content:center;padding:calc(var(--knm-space)*1.2) 0}
+.knm-nav--dock .knm-dock-inner{display:flex;gap:7px;background:var(--knm-surface);border:1px solid var(--knm-border);
+  padding:7px;border-radius:999px;box-shadow:var(--knm-elevation-md)}
+.knm-nav--commandk{width:100%;padding:calc(var(--knm-space)*1.2) calc(var(--knm-space)*1.6);
+  border-bottom:1px solid var(--knm-border);background:var(--knm-surface);position:relative}
+.knm-navitem{border:1px solid transparent;background:transparent;color:var(--knm-text-muted);font-family:inherit;
+  padding:7px 11px;border-radius:var(--knm-radius-sm);cursor:pointer;text-align:left;font-size:.9em;
+  text-transform:none;letter-spacing:0;font-weight:500;box-shadow:none}
+.knm-navitem:hover{background:var(--knm-surface-alt);color:var(--knm-text);transform:none}
+.knm-navitem.active{background:var(--knm-accent);color:var(--knm-accent-text)}
+.knm-nav--dock .knm-navitem{border-radius:999px;padding:7px 13px}
+.knm-commandk-trigger{border:1px solid var(--knm-border);background:var(--knm-surface-alt);color:var(--knm-text-muted);
+  padding:7px 13px;border-radius:var(--knm-radius-sm);cursor:pointer;font-family:inherit;width:100%;text-align:left;
+  max-width:300px;text-transform:none;letter-spacing:0;font-weight:500;box-shadow:none}
+.knm-commandk-panel{position:absolute;top:100%;left:calc(var(--knm-space)*1.6);margin-top:6px;background:var(--knm-surface);
+  border:1px solid var(--knm-border);border-radius:var(--knm-radius-md);box-shadow:var(--knm-elevation-md);padding:6px;
+  display:none;flex-direction:column;min-width:200px;z-index:5}
+.knm-commandk-panel.open{display:flex}
+@media(max-width:640px){
+  .knm-nav--sidebar{width:100%;flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--knm-border)}
+  .rendered-app.layout-sidebar{flex-direction:column}
+}
+/* panel-grid */
+.knm-cards--grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:calc(var(--knm-space)*1.4)}
+.knm-cards--bento{display:grid;grid-template-columns:repeat(4,1fr);gap:calc(var(--knm-space)*1.4)}
+.knm-cards--bento .knm-card:first-child{grid-column:span 2;grid-row:span 2}
+@media(max-width:700px){.knm-cards--bento{grid-template-columns:repeat(2,1fr)}}
+.knm-cards--masonry{columns:3 128px;column-gap:calc(var(--knm-space)*1.4)}
+.knm-cards--masonry .knm-card{break-inside:avoid;margin-bottom:calc(var(--knm-space)*1.4)}
+.knm-cards--stack{display:flex;flex-direction:column;gap:calc(var(--knm-space)*1.1)}
+.knm-card{background:var(--knm-surface);border:1px solid var(--knm-border);border-radius:var(--knm-radius-md);
+  padding:calc(var(--knm-space)*1.4);box-shadow:var(--knm-elevation-sm)}
+.knm-card .label{font-size:.72em;color:var(--knm-text-muted);margin-bottom:5px}
+.knm-card .value{font-size:1.4em;font-weight:var(--knm-heading-weight,700)}
+.knm-card .trend{font-size:.74em;margin-top:3px}
+.knm-card .trend.up{color:var(--knm-success)} .knm-card .trend.down{color:var(--knm-danger)}
+/* data-view */
+.knm-dataview--list .row-item{display:flex;align-items:center;gap:9px;padding:5px 0;border-bottom:1px solid var(--knm-border)}
+.knm-dataview--list .row-item:last-child{border-bottom:none}
+.knm-dataview--list .row-label{width:96px;flex-shrink:0;font-size:.82em;color:var(--knm-text-muted)}
+.knm-dataview--list .row-bar-track{flex:1;height:7px;background:var(--knm-surface-alt);border-radius:99px;overflow:hidden}
+.knm-dataview--list .row-bar-fill{height:100%;background:var(--knm-accent);border-radius:99px}
+.knm-dataview--list .row-value{width:44px;text-align:right;font-size:.8em;font-variant-numeric:tabular-nums}
+.knm-dataview--bars{display:flex;align-items:flex-end;gap:9px;height:132px;padding-top:8px}
+.knm-dataview--bars .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:5px}
+.knm-dataview--bars .bar{width:100%;max-width:30px;background:var(--knm-accent);border-radius:var(--knm-radius-sm) var(--knm-radius-sm) 0 0}
+.knm-dataview--bars .bar-label{font-size:.68em;color:var(--knm-text-muted);text-align:center}
+.knm-dataview--radial{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.knm-dataview--radial .ring{width:112px;height:112px;border-radius:50%;flex-shrink:0}
+.knm-dataview--radial .legend{display:flex;flex-direction:column;gap:5px;font-size:.8em}
+.knm-dataview--radial .legend-item{display:flex;align-items:center;gap:7px}
+.knm-dataview--radial .dot{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+.knm-dataview--tree ul{list-style:none;margin:0;padding-left:14px}
+.knm-dataview--tree > ul{padding-left:0}
+.knm-dataview--tree .group-label{font-weight:700;font-size:.82em;margin:7px 0 3px}
+.knm-dataview--tree li{font-size:.8em;padding:2px 0;color:var(--knm-text-muted);display:flex;justify-content:space-between;gap:9px}
+/* conversation */
+.knm-convo--bubbles .msg-list{display:flex;flex-direction:column;gap:7px;margin-bottom:9px;max-height:170px;overflow-y:auto}
+.knm-convo--bubbles .bubble{max-width:80%;padding:7px 11px;border-radius:var(--knm-radius-lg);font-size:.86em}
+.knm-convo--bubbles .bubble.user{align-self:flex-end;background:var(--knm-accent);color:var(--knm-accent-text)}
+.knm-convo--bubbles .bubble.assistant,.knm-convo--bubbles .bubble.system{align-self:flex-start;background:var(--knm-surface-alt);color:var(--knm-text)}
+.knm-convo--terminal{background:var(--knm-terminal-bg,#0c0f0b);color:var(--knm-terminal-fg,#7CFC8C);font-family:var(--mono);border-radius:var(--knm-radius-md);padding:11px}
+.knm-convo--terminal .msg-list{display:flex;flex-direction:column;gap:2px;margin-bottom:8px;max-height:170px;overflow-y:auto;font-size:.8em}
+.knm-convo--terminal .line::before{content:"$ ";opacity:.6}
+.knm-convo--terminal .line.user::before{content:"> "}
+.knm-convo--terminal input.knm-input{color:var(--knm-terminal-fg,#7CFC8C);border-color:#2a3a2a;background:transparent}
+.knm-convo--cards .msg-list{display:flex;flex-direction:column;gap:7px;margin-bottom:9px;max-height:190px;overflow-y:auto}
+.knm-convo--cards .msg-card{border:1px solid var(--knm-border);border-radius:var(--knm-radius-md);padding:7px 9px;background:var(--knm-surface)}
+.knm-convo--cards .msg-card .role{font-size:.64em;text-transform:uppercase;letter-spacing:.06em;color:var(--knm-text-muted);margin-bottom:2px}
+.knm-input-row{display:flex;gap:7px}
+input.knm-input{flex:1;border:1px solid var(--knm-border);border-radius:var(--knm-radius-sm);padding:7px 9px;
+  background:var(--knm-bg);color:var(--knm-text);font-family:inherit;font-size:.86em;min-width:0}
+button.knm-btn{background:var(--knm-accent);color:var(--knm-accent-text);border:none;border-radius:var(--knm-radius-sm);
+  padding:7px 12px;cursor:pointer;font-family:inherit;font-size:.84em;flex-shrink:0;text-transform:none;letter-spacing:0;font-weight:600;box-shadow:none}
+/* form */
+.knm-form--stacked .field{display:flex;flex-direction:column;gap:3px;margin-bottom:9px}
+.knm-form--inline{display:flex;flex-wrap:wrap;gap:9px;align-items:flex-end}
+.knm-form--inline .field{display:flex;flex-direction:column;gap:3px}
+.knm-form--card .field{border:1px solid var(--knm-border);border-radius:var(--knm-radius-md);padding:9px;margin-bottom:7px;background:var(--knm-surface)}
+.knm-form label{font-size:.72em;color:var(--knm-text-muted)}
+.knm-form-note{font-size:.76em;color:var(--knm-text-muted);margin-top:7px}
+.knm-form-note.ok{color:var(--knm-accent)}
+
+/* ═══ WORLD 1 · NEON-CYBER (Cyberpunk 2077) ═══ */
+.world-neoncyber{position:relative;font-family:var(--mono)}
+.world-neoncyber::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;
+  background:repeating-linear-gradient(0deg,rgba(0,255,255,.05) 0 1px,transparent 1px 3px);mix-blend-mode:overlay}
+.world-neoncyber .knm-panel-heading{color:#00FFFF;text-shadow:0 0 8px rgba(0,255,255,.6);letter-spacing:.16em}
+.world-neoncyber .knm-nav--dock .knm-dock-inner,.world-neoncyber .knm-card,.world-neoncyber .knm-convo--terminal{
+  clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px))}
+.world-neoncyber .knm-card{border-color:rgba(0,255,255,.35);box-shadow:0 0 14px -4px rgba(255,0,60,.5)}
+.world-neoncyber .knm-card .value{color:#FCE205;text-shadow:0 0 10px rgba(252,226,5,.5)}
+.world-neoncyber .knm-navitem.active{box-shadow:0 0 12px rgba(0,255,255,.7)}
+.world-neoncyber .knm-dataview--bars .bar{box-shadow:0 0 10px rgba(255,0,60,.6)}
+.world-neoncyber .knm-name-glitch{position:relative}
+.world-neoncyber .knm-name-glitch::before,.world-neoncyber .knm-name-glitch::after{content:attr(data-t);position:absolute;left:0;top:0;width:100%;overflow:hidden}
+.world-neoncyber .knm-name-glitch::before{color:#FF003C;transform:translate(-1.5px,0);clip-path:inset(0 0 55% 0);opacity:.7}
+.world-neoncyber .knm-name-glitch::after{color:#00FFFF;transform:translate(1.5px,0);clip-path:inset(55% 0 0 0);opacity:.7}
+
+/* ═══ WORLD 2 · ARCANE-UNDERWORLD (Hades) ═══ */
+.world-arcane{font-family:var(--serif);
+  background:radial-gradient(120% 90% at 50% 0%,#2a1420,#1a0f1e 70%) !important}
+.world-arcane .knm-nav--sidebar{background:linear-gradient(180deg,#24131c,#160a12);border-right:1px solid rgba(230,169,25,.35)}
+.world-arcane .knm-nav-brand{color:#e6a919;font-weight:700;letter-spacing:.02em}
+.world-arcane .knm-panel-heading{color:#e6a919;font-family:var(--serif);font-weight:700;letter-spacing:.04em;text-transform:none;font-size:.86rem}
+.world-arcane .knm-card{background:linear-gradient(180deg,#2a1622,#1c0f18);border:1px solid rgba(230,169,25,.4);
+  box-shadow:inset 0 1px 0 rgba(230,169,25,.15),0 8px 20px -12px #000}
+.world-arcane .knm-card .value{color:#f2d58a;font-family:var(--serif)}
+.world-arcane .knm-navitem.active{background:linear-gradient(180deg,#e6a919,#b8801a);color:#1a0f1e;box-shadow:0 3px 10px -3px rgba(230,169,25,.7)}
+.world-arcane .knm-navitem:hover{color:#f2d58a}
+.world-arcane .knm-msg-card,.world-arcane .knm-convo--cards .msg-card{border-color:rgba(230,169,25,.3)}
+
+/* ═══ WORLD 3 · TACTICAL (Valorant) ═══ */
+.world-tactical{font-family:var(--tech);background:#0E2A47 !important}
+.world-tactical .knm-nav--topbar{background:#0b2038;border-bottom:2px solid #ff4655}
+.world-tactical .knm-nav-brand{color:#ece8e1;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.world-tactical .knm-panel-heading{color:#d9a441;letter-spacing:.16em}
+.world-tactical .knm-card{background:#0b2038;border:1px solid #1c3e60;border-radius:2px}
+.world-tactical .knm-card .value{color:#ece8e1;font-weight:700}
+.world-tactical .knm-navitem{border-radius:2px;text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.world-tactical .knm-navitem.active{background:#ff4655;color:#fff;clip-path:polygon(6px 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%,0 6px)}
+.world-tactical .knm-dataview--bars .bar{background:#d9a441;border-radius:2px 2px 0 0}
+
+/* ═══ WORLD 4 · VAPORWAVE ═══ */
+.world-vapor{font-family:var(--disp);font-style:italic;position:relative;
+  background:linear-gradient(180deg,#1a0b2e 0%,#2d1150 48%,#3a1b4d 100%) !important}
+.world-vapor::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;pointer-events:none;z-index:0;
+  background:
+    repeating-linear-gradient(90deg,rgba(255,113,206,.35) 0 1px,transparent 1px 34px),
+    repeating-linear-gradient(0deg,rgba(1,205,254,.35) 0 1px,transparent 1px 26px);
+  transform:perspective(220px) rotateX(62deg);transform-origin:bottom;opacity:.5}
+.world-vapor .knm-content,.world-vapor .knm-nav{position:relative;z-index:1}
+.world-vapor .knm-panel-heading{color:#01cdfe;text-shadow:0 0 10px rgba(255,113,206,.6);font-style:italic}
+.world-vapor .knm-card{background:linear-gradient(135deg,rgba(255,113,206,.16),rgba(1,205,254,.12));
+  border:1px solid rgba(255,113,206,.5);box-shadow:0 0 18px -6px rgba(1,205,254,.6)}
+.world-vapor .knm-card .value{background:linear-gradient(90deg,#ff71ce,#01cdfe);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:italic}
+.world-vapor .knm-nav--dock .knm-dock-inner{background:linear-gradient(135deg,rgba(255,113,206,.2),rgba(1,205,254,.16));border-color:rgba(255,113,206,.5)}
+.world-vapor .knm-navitem.active{background:linear-gradient(90deg,#ff71ce,#01cdfe);color:#1a0b2e}
+
+/* ═══ WORLD 5 · TERMINAL (green-on-black) ═══ */
+.world-terminal{font-family:var(--mono);background:#020402 !important;color:#33ff66}
+.world-terminal .knm-nav--commandk,.world-terminal .knm-nav--topbar{background:#040804;border-bottom:1px solid #12331a}
+.world-terminal .knm-nav-brand{color:#33ff66}
+.world-terminal .knm-panel-heading{color:#33ff66;letter-spacing:.12em}
+.world-terminal .knm-panel-heading::before{content:"// "}
+.world-terminal .knm-card{background:#030603;border:1px solid #12331a;border-radius:0}
+.world-terminal .knm-card .value{color:#7CFC8C}
+.world-terminal .knm-navitem{border-radius:0;color:#2aa347}
+.world-terminal .knm-navitem.active{background:#0c2413;color:#7CFC8C;outline:1px solid #33ff66}
+.world-terminal .knm-navitem.active::after{content:"_";animation:blink 1s step-end infinite}
+.world-terminal .knm-commandk-trigger{border-radius:0;background:#030603;color:#2aa347}
+.world-terminal .knm-dataview--list .row-bar-fill{background:#33ff66}
+@keyframes blink{50%{opacity:0}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
 
+  <!-- ═══════════════ HERO ═══════════════ -->
   <header class="hero">
-    <div class="eyebrow">FallKard · the sovereign node, made personal</div>
-    <h1>Open your kard.<br><span class="g">Become a sovereign node.</span></h1>
-    <p class="lede">FallKard is the one entry point that weaves the whole estate into a single flow. A kard is you-as-a-system — a portable, signed identity. Open it and your own node instantiates: your structure, your look, your memory, on your metal. It runs cheap, it's yours, and it's a node in the mesh. One kard at a time.</p>
-    <div class="flowline">
-      <span class="step">Acquire a kard</span><span class="arw">→</span>
-      <span class="step">Instantiate your node</span><span class="arw">→</span>
-      <span class="step">Run cheap</span><span class="arw">→</span>
-      <span class="step">Join the mesh</span>
+    <div>
+      <div class="eyebrow">FallKard · the sovereign locker</div>
+      <h1>Pull a kard.<br><span class="g">Open your world.</span></h1>
+      <p class="lede">FallKard turns the tools you use into something you actually <b>own</b>. Get a kard, open it, and your own workspace appears — on <b>your</b> machine, in a look <b>you</b> choose. No account. No monthly rent. If the company behind it vanishes, your kard still opens.</p>
+      <div class="loop">
+        <span class="s"><b>1</b> Get a kard</span><span class="a">→</span>
+        <span class="s"><b>2</b> Open it</span><span class="a">→</span>
+        <span class="s"><b>3</b> Pick your look</span><span class="a">→</span>
+        <span class="s"><b>4</b> You're in</span>
+      </div>
+      <div class="trust">
+        <span class="t"><b>You own it</b> — signed to you</span>
+        <span class="t"><b>Opens on your machine</b></span>
+        <span class="t"><b>Nothing leaves your device</b></span>
+      </div>
     </div>
-    <div class="chips">
-      <span class="chip"><b>Provable</b> — no LLM judge</span>
-      <span class="chip"><b>Sovereign</b> — your node, your data</span>
-      <span class="chip"><b>Cheap</b> — measured, not claimed</span>
-      <span class="chip">Kernel-backed · <b id="gateChip">witness-gated</b></span>
+    <div class="hero-card">
+      <div class="kardstage">
+        <div class="kard tier-exotic float is-empty" id="heroKard">
+          <div class="kard__inner">
+            <div class="kard__sheen"></div>
+            <div class="kard__empty"><div class="rune">✦</div><p>a kard, freshly pulled</p></div>
+            <div class="kard__real">
+              <div class="kard__top"><span class="kard__tier" data-slot="tier">EXOTIC</span><span class="kard__kind">SOVEREIGN NODE</span></div>
+              <div class="kard__art" data-slot="art"></div>
+              <div class="kard__name" data-slot="name">—</div>
+              <div class="kard__serial" data-slot="serial">—</div>
+              <div class="kard__affixes" data-slot="affixes"></div>
+              <div class="kard__stat">
+                <div class="kard__statrow"><span>Budget cap</span><b data-slot="budget">—</b></div>
+                <div class="kard__bar"><i data-slot="bar"></i></div>
+              </div>
+              <div class="kard__seal" data-slot="seal">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- 1 · ACQUIRE + INSTANTIATE : the live spine -->
-  <section id="spine">
-    <div class="sec-head"><span class="sec-num">01</span><h2>The spine, live</h2></div>
-    <p class="sec-sub">This is the real thing running in your browser on the gated kernels — nothing mocked. Mint a signed kard, open it to instantiate a node, and watch the identity, the capability check, and the uncrossable budget wall all enforce for real.</p>
-    <div class="grid2">
-      <div class="panel">
-        <div class="label">1 · Mint a kard (your signed identity)</div>
-        <div class="controls">
-          <button id="mintBtn">Mint my kard</button>
-          <button class="ghost" id="downloadKard" disabled>Download kard</button>
+  <!-- ═══════════════ WHAT IT DOES / REPLACES / WHO ═══════════════ -->
+  <section id="what">
+    <div class="sec-head"><span class="num">✦</span><h2>Software you own, not software you rent</h2></div>
+    <p class="sec-sub">Almost every tool you use — your dashboard, your CRM, your forms, your workspace — was built once and then <b>rented</b> to you: the same look for everyone, running on someone else's server you pay for every month. FallKard flips it. The tool is still built once — but <b>your copy is yours</b>.</p>
+    <div class="value">
+      <div class="card hi">
+        <div class="k">What you get</div>
+        <h3>Your workspace. Your world. Your rules.</h3>
+        <p>Your kard is like a save file for a tool that's yours. Open it and the whole workspace loads <b>on your own machine</b>, in a <b>look you picked</b>, remembering <b>your</b> stuff. It never has to be rebuilt or re-hosted for each person — one build, worn a thousand ways. Sign in to nothing; nothing phones home.</p>
+        <div class="who">
+          <div class="row"><div class="badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="4"/><path d="M11 11l8 8m-3-3l2-2m-4 0l2-2"/></svg></div><div><h4>You're not a tenant on someone's platform</h4><p>You hold the key. The tool opens for the identity your kard names — and only that identity can sign it.</p></div></div>
+          <div class="row"><div class="badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h10M4 8l3-3M4 8l3 3"/><path d="M20 16H10M20 16l-3-3M20 16l-3 3"/></svg></div><div><h4>Change the whole look in one click</h4><p>The tool underneath stays the same; the skin over it is entirely yours to swap. See it live in the locker below.</p></div></div>
         </div>
-        <div class="kv" id="kardView" style="margin-top:12px">A kard carries an Ed25519 owner key, a skin + structure reference, a capability set, and an uncrossable budget — signed by the identity it names.</div>
       </div>
-      <div class="panel">
-        <div class="label">2 · Open it → instantiate the node</div>
-        <div class="controls">
-          <button id="openBtn" disabled>Open my kard</button>
-          <button class="ghost" id="tamperBtn" disabled>Tamper &amp; re-open</button>
-        </div>
-        <div id="openView"></div>
+      <div class="card">
+        <div class="k">The expensive half this deletes</div>
+        <h3>An alternative to the costly parts</h3>
+        <p style="margin-bottom:6px">FallKard is an alternative to the parts of software that cost the most and add the least:</p>
+        <ul class="kill">
+          <li>The <b>bespoke front-end rebuilt from scratch</b> for every client or brand — what agencies charge a fortune for.</li>
+          <li><b>"White-label" theming</b> sold as a premium add-on, per tenant.</li>
+          <li><b>Per-seat hosted tools</b> billed every month whether you use them or not.</li>
+          <li>The <b>stack of separate subscriptions</b> that each do one small thing.</li>
+          <li><b>Per-customer hosting and uptime</b> you pay for so a vendor doesn't have to.</li>
+        </ul>
+        <div class="killnote">One build. Skinned per person. Hosted by no one but the owner.</div>
       </div>
     </div>
-    <div class="grid2" style="margin-top:16px">
-      <div class="panel">
-        <div class="label">3 · The uncrossable budget wall</div>
-        <p class="meta" style="margin:0 0 10px">A node may spend up to its kard's budget — never past it. No capability, no signature, no caller can raise the ceiling.</p>
-        <div class="controls">
-          <button class="ghost" id="spendOk">Spend within budget</button>
-          <button class="ghost" id="spendOver">Try to overspend</button>
+    <div class="value" style="margin-top:18px">
+      <div class="card">
+        <div class="who">
+          <div class="row"><div class="badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></svg></div><div><h4>For agencies &amp; solo builders</h4><p>Build the tool <b>once</b>. Hand each client their own skinned copy that opens on their machine. No rebuild, no re-host, no per-tenant theming bill — the skin is a file, not a project.</p></div></div>
         </div>
-        <div id="spendView"></div>
       </div>
-      <div class="panel">
-        <div class="label">4 · Run cheap — the measured number</div>
-        <p class="meta" style="margin:0 0 10px">Render only what's in view, hold it while it stays, drop it when it leaves. Counted over a real usage path, with vs without.</p>
-        <div class="controls"><button class="ghost" id="cheapBtn">Measure it</button></div>
-        <div id="cheapView"></div>
+      <div class="card">
+        <div class="who">
+          <div class="row"><div class="badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div><div><h4>For individuals &amp; owners</h4><p>Your own tools that <b>look like yours</b> and <b>outlive any vendor</b>. Everything runs on your device. If the company behind it disappears, your kard still opens and your workspace is still there.</p></div></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 2 · SHAPE : one kard, two faces -->
-  <section id="faces">
-    <div class="sec-head"><span class="sec-num">02</span><h2>One kard, your face</h2></div>
-    <p class="sec-sub">The same structure — the same node — renders in whatever skin its owner brings. Konomi builds the structure (what it is); you own the skin (how it looks). Here is one workspace under two skins: same build, two faces, both fully yours.</p>
-    <div class="faces">
-      <div class="face"><div class="cap">Skin A · <span id="faceAName">—</span></div><div class="stage" id="faceA"></div></div>
-      <div class="face"><div class="cap">Skin B · <span id="faceBName">—</span></div><div class="stage" id="faceB"></div></div>
+  <!-- ═══════════════ 01 · THE LOOP, LIVE ═══════════════ -->
+  <section id="spine">
+    <div class="sec-head"><span class="num">01</span><h2>The loop, for real</h2></div>
+    <p class="sec-sub">This isn't a mock-up. Pull a kard and it's forged in your browser, right now. Open it and your node wakes up. Try to cheat its spending cap and watch the wall hold. Everything here runs on your device.</p>
+    <div class="spine">
+      <div class="kardstage">
+        <div class="kard tier-exotic is-empty" id="kard">
+          <div class="kard__inner">
+            <div class="kard__sheen"></div>
+            <div class="kard__empty"><div class="rune">✦</div><p>empty slot — pull a kard</p></div>
+            <div class="kard__real">
+              <div class="kard__top"><span class="kard__tier" data-slot="tier">EXOTIC</span><span class="kard__kind">SOVEREIGN NODE</span></div>
+              <div class="kard__art" data-slot="art"></div>
+              <div class="kard__name" data-slot="name">—</div>
+              <div class="kard__serial" data-slot="serial">—</div>
+              <div class="kard__affixes" data-slot="affixes"></div>
+              <div class="kard__stat">
+                <div class="kard__statrow"><span>Budget cap</span><b data-slot="budget">—</b></div>
+                <div class="kard__bar"><i data-slot="bar"></i></div>
+              </div>
+              <div class="kard__seal" data-slot="seal">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ritual">
+        <div class="rstep on" id="step-mint">
+          <div class="h"><span class="dot">1</span><div><h3>Pull your kard</h3><div class="sub">mint · a signed identity is forged</div></div></div>
+          <p>Forge a brand-new kard, signed only to you. Nobody else can make this one.</p>
+          <div class="controls">
+            <button id="mintBtn">Pull a kard</button>
+            <button class="ghost" id="downloadKard" disabled>Save it (.kard)</button>
+          </div>
+        </div>
+
+        <div class="rstep locked" id="step-open">
+          <div class="h"><span class="dot">2</span><div><h3>Open it → your node wakes up</h3><div class="sub">open · verify the signature, summon the node</div></div></div>
+          <p>Opening checks the kard is really yours and untouched, then brings your node online. Try tampering with it first — the check catches it.</p>
+          <div class="controls">
+            <button id="openBtn" disabled>Summon my node</button>
+            <button class="ghost danger" id="tamperBtn" disabled>Tamper &amp; re-open</button>
+          </div>
+          <div class="readout" id="openView"></div>
+        </div>
+
+        <div class="rstep locked" id="step-spend">
+          <div class="h"><span class="dot">3</span><div><h3>A cap that can't be crossed</h3><div class="sub">budget wall · enforced, not decorative</div></div></div>
+          <p>Every kard carries a hard spending cap. No trick, no re-sign, no caller can push a node past it.</p>
+          <div class="controls">
+            <button class="ghost" id="spendOk" disabled>Spend within the cap</button>
+            <button class="ghost danger" id="spendOver" disabled>Try to blow past it</button>
+          </div>
+          <div class="readout" id="spendView"></div>
+        </div>
+
+        <div class="rstep locked" id="step-cheap">
+          <div class="h"><span class="dot">4</span><div><h3>It runs light</h3><div class="sub">cheap · a counted number, not a claim</div></div></div>
+          <p>Your node only draws what you're actually looking at, and reuses what stays on screen. Here's the saving, counted over a real usage path.</p>
+          <div class="controls"><button class="ghost" id="cheapBtn" disabled>Measure it</button></div>
+          <div class="readout" id="cheapView"></div>
+        </div>
+      </div>
     </div>
-    <div class="controls" style="margin-top:12px">
-      <button class="ghost" id="reskin">Swap both skins</button>
+  </section>
+
+  <!-- ═══════════════ 02 · THE LOCKER (two faces) ═══════════════ -->
+  <section id="locker">
+    <div class="sec-head"><span class="num">02</span><h2>Pick your look</h2></div>
+    <p class="sec-sub">Here is the <b>same</b> workspace — the exact same node — wearing two different skins. Not a colour swap: a whole world each. Change the type, the layout, the mood in a click. <b>Konomi</b> builds what the workspace <i>is</i>; the skin over it is entirely yours. Set each side to any world and see for yourself.</p>
+    <div class="faces">
+      <div class="face">
+        <div class="face__bar"><span class="face__lab">Face A</span><span class="face__name" id="faceAName">—</span></div>
+        <div class="chiprow" id="skinsA"></div>
+        <div class="stage" id="faceA"></div>
+      </div>
+      <div class="face">
+        <div class="face__bar"><span class="face__lab">Face B</span><span class="face__name" id="faceBName">—</span></div>
+        <div class="chiprow" id="skinsB"></div>
+        <div class="stage" id="faceB"></div>
+      </div>
+    </div>
+    <div class="locker-actions">
+      <button id="shuffleFaces">🎲 Shuffle both worlds</button>
       <a href="https://sjgant80-hub.github.io/konomi-skins/" target="_blank" rel="noopener"><button class="ghost">Open the full skin studio →</button></a>
     </div>
+    <div class="locker-note">Sample workspace + demo data, rendered live in your browser — no backend, nothing sent anywhere. The conversation replies are scripted, not a live model.</div>
   </section>
 
-  <!-- 3 · THE WEAVE -->
+  <!-- ═══════════════ 03 · THE WEAVE ═══════════════ -->
   <section id="weave">
-    <div class="sec-head"><span class="sec-num">03</span><h2>The whole weave</h2></div>
-    <p class="sec-sub">Everything in the estate is an organ of one flow. The kard is the spine; the trust rail runs underneath all of it. Each stage is live — open its organ.</p>
+    <div class="sec-head"><span class="num">03</span><h2>Every piece is one system</h2></div>
+    <p class="sec-sub">FallKard isn't one app — it's the front door to a whole estate of tools, each an organ of the same flow. The kard is the spine; a re-runnable trust rail runs underneath all of it. Every stage below is live — open its organ.</p>
     <div class="weave"><!--WEAVE_CARDS--></div>
   </section>
 
-  <!-- 4 · HOW + HONEST -->
+  <!-- ═══════════════ 04 · HOW + HONEST + BUILDERS ═══════════════ -->
   <section id="how">
-    <div class="sec-head"><span class="sec-num">04</span><h2>How it holds together</h2></div>
+    <div class="sec-head"><span class="num">04</span><h2>Why it holds together</h2></div>
     <div class="how">
-      <div class="b"><h3>Self-tailoring</h3><p>Your skin, your memory that learns from your work, your workspace structure. The build fits you — not you fitting a fixed interface.</p></div>
-      <div class="b"><h3>Self-cheapening</h3><p>Render only your point of view, recycle what you leave, run on your own metal. Tailored and cheap at once — the two things usually in tension.</p></div>
-      <div class="b"><h3>Sovereign</h3><p>Your node, your data, your model — signed to you, owned by you, verifiable by anyone. No account, no lock-in.</p></div>
-      <div class="b"><h3>The mesh, one kard at a time</h3><p>Each kard is a node. A million kards is a personalised sovereign mesh, entered one kard at a time. FallKard is the on-ramp.</p></div>
+      <div class="b"><h3>It fits you</h3><p>Your look, your memory that learns from your work, your workspace shape. The tool bends to you — not you to a fixed interface.</p></div>
+      <div class="b"><h3>It runs light</h3><p>It draws only what you're looking at and reuses what stays on screen, on your own hardware. Tailored and cheap at once — usually a trade-off, here both.</p></div>
+      <div class="b"><h3>It's yours</h3><p>Signed to you, owned by you, verifiable by anyone. No account, no lock-in, no server holding your data hostage.</p></div>
+      <div class="b"><h3>It joins up</h3><p>Each kard is a node. Many kards make a personal network you enter one kard at a time. FallKard is the on-ramp.</p></div>
     </div>
+
     <div class="honest">
-      <div class="label">The honest wall</div>
+      <div class="k">Straight about what's real</div>
       <ul>
-        <li><b>Buildable:</b> every organ exists; FallKard composes them. The kard kernels are witness-gated.</li>
-        <li><b>Cheap is measured</b>, not claimed — the number above is counted render operations, with vs without.</li>
-        <li><b>The money-rail waits behind counsel.</b> The budget wall is real and enforced; selling kards or skins is gated off until the counsel + rail are in place.</li>
-        <li><b>The mesh is the next fold.</b> Today a kard is a real, verifiable sovereign node; full node-to-node federation is the layer being built on top.</li>
+        <li><b>The pieces exist</b> — FallKard composes real organs of the estate, live and linked below.</li>
+        <li><b>"Runs light" is measured</b>, not claimed — the number above is counted work, with the trick vs without.</li>
+        <li><b>The spending cap is real and enforced.</b> Selling kards or skins waits until the money side is set up properly.</li>
+        <li><b>The full network is the next layer.</b> Today a kard is a real, verifiable node you own; node-to-node federation is being built on top.</li>
       </ul>
+    </div>
+
+    <div class="builders">
+      <div class="k">Under the hood · for builders</div>
+      <div class="grid">
+        <div><b>Ed25519</b> — each kard is a self-sovereign signed identity; only the key it names can sign it.</div>
+        <div><b>spendGate</b> — the uncrossable budget wall, enforced in the gated kernel.</div>
+        <div><b>Witness-gated</b> — <span id="gateChipInline">kard + flow kernels</span>, mutation-proven, no LLM judge.</div>
+        <div><b>Kernel-backed page</b> — this page inlines the exact gated kernels; the logic you run is the logic the gate proves.</div>
+        <div><b>cheapVerdict</b> — counts render operations over a real usage path, with vs without. Reproducible.</div>
+        <div><b>Client-side</b> — no backend, no accounts; every keypair and render happens on your device.</div>
+      </div>
     </div>
   </section>
 
+  <!-- ═══════════════ FAQ ═══════════════ -->
+  <section id="faq">
+    <div class="sec-head"><span class="num">?</span><h2>Questions</h2></div>
+    <div class="faq"><!--FAQ--></div>
+  </section>
+
   <footer>
-    <div>FallKard — the sovereign node, made personal + cheap. Built by <b>Kar</b> (karma-didy) on the FallForge estate.</div>
-    <div class="prov" id="gateProv"></div>
-    <div class="prov">Provenance — <b>Konomi</b>, the structure system, is <b>Thomas Frumkin</b>&rsquo;s. The estate&rsquo;s mind and cost model build on the <b>Generalized Entropy Principle (GEP)</b> by <b>Gary W. Floyd</b> — Lumiea Systems Research Division, ThunderStruck Service LLC.</div>
+    <div class="brandline">FallKard — pull a kard, open your world.</div>
+    <div class="prov">Built by <b>Kar</b> (karma-didy) on the FallForge estate. <span id="gateProv"></span></div>
+    <div class="prov">Powered by the <b>Konomi</b> architecture, created by <b>Thomas Frumkin</b>. The estate's mind and cost model build on the <b>Generalized Entropy Principle (GEP)</b> by <b>Gary W. Floyd</b> — Lumiea Systems Research Division, ThunderStruck Service LLC.</div>
   </footer>
 
 </div>

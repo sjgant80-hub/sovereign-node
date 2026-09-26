@@ -1,21 +1,28 @@
-# FallKard
+# FallKard — the Sovereign Locker
 
-> The entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to
-> instantiate your own sovereign node (your structure, your look, your memory, on your metal), run it
-> cheap, and join the mesh. One kard at a time. Deterministic, no LLM judge; the page runs client-side.
+> FallKard turns the software you use into something you own. You get a kard (a portable, signed card),
+> you open it, and your own workspace appears — on your own machine, in a look you choose. No account, no
+> monthly rent; if the vendor vanishes, your copy is still yours. Runs entirely in your browser.
 
-## The flow
-Acquire (mint a signed kard) -> Instantiate (open it: structure + your skin + your memory) -> Run cheap
-(render your point of view + recycle state, measured) -> Join the mesh (each kard is a node).
+## In plain terms
+Pull a kard -> open it (your workspace appears) -> pick your look (skins) -> it's yours, on your machine.
+It's an alternative to the parts of software that cost the most and add the least: the front-end rebuilt
+per client/brand, "white-label" theming sold per tenant, per-seat hosted tools, monthly subscription stacks,
+and per-customer hosting. Build once, own forever, personalise infinitely.
 
-## Gated kernels (the page inlines them)
-- kard.mjs: mintKard / attachSignature (self-sovereign Ed25519) / verifyKard / spendGate (uncrossable budget wall) / canOpen. Witness 54/55, 1 argued equivalent.
-- flow.mjs: openKard / runCost / cheapVerdict (counted render-ops, with vs without — cheap is measured). Witness 15/15.
+## Who it's for
+Agencies / solo builders who rebuild the same tool for every client (build once, skin per client, no re-host),
+and individuals who want their own tools that feel like theirs and outlive any vendor.
 
-## Honest scope
-The budget wall is real and enforced; selling kards/skins waits behind counsel. Cheap is a counted
-measurement, not a claim. Full node-to-node mesh federation is the next layer.
+## Under the hood (for builders)
+A kard is a signed identity (Ed25519) carrying a skin, a structure, capabilities and an uncrossable budget.
+Two witness-gated kernels drive it (the page inlines them, so the live logic is the gated logic):
+- kard.mjs: mint / sign (self-sovereign) / verify / the uncrossable budget wall. Witness clean.
+- flow.mjs: open + a counted cheap measurement (render only what you look at, recycle the rest). Cheap is
+  measured, not claimed. Witness clean.
+No LLM judge anywhere. The budget wall is real; selling kards/skins waits behind counsel; full node-to-node
+federation is the next layer.
 
 ## Credit
-Konomi (structure) — Thomas Frumkin. The Generalized Entropy Principle (GEP) — Gary W. Floyd, Lumiea
-Systems Research Division / ThunderStruck Service LLC. Built by Kar (karma-didy) on the FallForge estate.
+Konomi (the structure system) — Thomas Frumkin. The Generalized Entropy Principle (GEP) — Gary W. Floyd,
+Lumiea Systems Research Division / ThunderStruck Service LLC. Built by Kar (karma-didy) on the FallForge estate.

@@ -1,6 +1,6 @@
 # FallKard
 
-**Live:** https://sjgant80-hub.github.io/fallkard/
+**Live:** https://sjgant80-hub.github.io/sovereign-node/
 
 The one entry point that weaves the FallForge estate into a single flow — the sovereign node, made
 personal and cheap.

@@ -38,7 +38,7 @@ const schema = {
   '@graph': [
     {
       '@type': 'SoftwareApplication', name: 'FallKard', applicationCategory: 'DeveloperApplication',
-      operatingSystem: 'Any (runs in the browser)', url: B + 'fallkard/', isAccessibleForFree: true,
+      operatingSystem: 'Any (runs in the browser)', url: B + 'sovereign-node/', isAccessibleForFree: true,
       description: 'FallKard is the entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to instantiate your own sovereign node — your structure, your look, your memory, on your metal — run it cheap, and join the mesh.',
       creator: { '@type': 'Organization', name: 'FallForge estate (Kar / karma-didy)' },
       featureList: ['Signed, self-sovereign kard identity (Ed25519)', 'Uncrossable per-kard budget wall', 'Measured render-on-observation + state-recycling (cheap is counted, not claimed)', 'Own your look — structure/skin split', 'Runs client-side, nothing sent anywhere'],

@@ -1,0 +1,21 @@
+# FallKard
+
+> The entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to
+> instantiate your own sovereign node (your structure, your look, your memory, on your metal), run it
+> cheap, and join the mesh. One kard at a time. Deterministic, no LLM judge; the page runs client-side.
+
+## The flow
+Acquire (mint a signed kard) -> Instantiate (open it: structure + your skin + your memory) -> Run cheap
+(render your point of view + recycle state, measured) -> Join the mesh (each kard is a node).
+
+## Gated kernels (the page inlines them)
+- kard.mjs: mintKard / attachSignature (self-sovereign Ed25519) / verifyKard / spendGate (uncrossable budget wall) / canOpen. Witness 54/55, 1 argued equivalent.
+- flow.mjs: openKard / runCost / cheapVerdict (counted render-ops, with vs without — cheap is measured). Witness 15/15.
+
+## Honest scope
+The budget wall is real and enforced; selling kards/skins waits behind counsel. Cheap is a counted
+measurement, not a claim. Full node-to-node mesh federation is the next layer.
+
+## Credit
+Konomi (structure) — Thomas Frumkin. The Generalized Entropy Principle (GEP) — Gary W. Floyd, Lumiea
+Systems Research Division / ThunderStruck Service LLC. Built by Kar (karma-didy) on the FallForge estate.

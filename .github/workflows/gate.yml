@@ -1,0 +1,22 @@
+name: gate
+on: [push, pull_request]
+permissions: { contents: read }
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: unit tests
+        run: |
+          node --test kard.test.mjs
+          node --test flow.test.mjs
+      - name: mutation gate (witness) — both kernels
+        run: |
+          node tools/witness.mjs mutate kard.mjs --timeout 90000 --cap 900 --baseline witness.baseline.json --test node --test kard.test.mjs
+          node tools/witness.mjs mutate flow.mjs --timeout 90000 --cap 900 --test node --test flow.test.mjs
+      - name: page fixpoint (the live page IS the gated kernels)
+        run: |
+          node make-page.mjs
+          git diff --exit-code index.html

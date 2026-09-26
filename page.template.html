@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FallKard — open your kard, become a sovereign node</title>
+<meta name="description" content="FallKard is the entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to instantiate your own sovereign node — your structure, your look, your memory, on your metal — run it cheap, and join the mesh. One kard at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<!--SCHEMA-->
+<style>
+:root{
+  --bg:#080a0f; --bg2:#0c0f16; --panel:#11151e; --panel2:#161b26; --ink:#eef2f8; --muted:#9aa6b8; --faint:#69748a;
+  --line:#1f2634; --line2:#2b3444; --accent:#7cf3d0; --accent2:#5aa0ff; --accent-ink:#04140f;
+  --gold:#e9c46a; --warn:#f0a35e; --bad:#f8776b; --good:#54d68a;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --disp:'Fraunces',Georgia,serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(1200px 700px at 70% -10%, #10202a 0%, var(--bg) 55%) no-repeat, var(--bg);
+  color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--disp);font-weight:600;text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+
+/* hero */
+.hero{padding:66px 0 30px}
+.hero h1{font-size:clamp(38px,7vw,72px);line-height:.99;letter-spacing:-.015em;margin:16px 0 0}
+.hero h1 .g{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:64ch;margin:20px 0 0}
+.flowline{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;align-items:center;font-family:var(--mono);font-size:13px}
+.flowline .step{border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);color:var(--ink)}
+.flowline .arw{color:var(--faint)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;background:var(--panel)}
+.chip b{color:var(--ink);font-weight:500}
+
+section{padding:30px 0;border-top:1px solid var(--line)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-head h2{font-size:26px}
+.sec-num{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.sec-sub{color:var(--muted);max-width:70ch;margin:0 0 20px}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+.kv{font-family:var(--mono);font-size:12.5px;color:var(--muted);word-break:break-all;line-height:1.75}
+.kv b{color:var(--ink);font-weight:500}
+button{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--accent-ink);background:var(--accent);
+  border:1px solid var(--accent);border-radius:10px;padding:10px 15px;cursor:pointer;transition:.13s}
+button:hover{filter:brightness(1.08)}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line2);font-weight:500}
+button.ghost:hover{border-color:var(--accent);color:#fff}
+button:disabled{opacity:.4;cursor:not-allowed}
+.controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
+.verdict{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);margin-top:12px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.st{font-family:var(--disp);font-size:20px;font-weight:600}
+.ok{color:var(--good)} .bg-ok{background:var(--good)} .no{color:var(--bad)} .bg-no{background:var(--bad)}
+.big{font-family:var(--disp);font-size:44px;font-weight:600;line-height:1}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* the two faces */
+.faces{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+@media(max-width:760px){.faces{grid-template-columns:1fr}}
+.face{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel2)}
+.face .cap{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:10px 12px 0}
+.stage{padding:12px;min-height:210px}
+
+/* the weave shelf */
+.weave{display:flex;flex-direction:column;gap:12px}
+.stagecard{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;border:1px solid var(--line);
+  border-radius:14px;padding:16px 18px;background:var(--panel)}
+.stagecard .n{font-family:var(--mono);font-size:13px;color:var(--accent);width:70px}
+.stagecard h3{font-size:18px;font-family:var(--sans);font-weight:600;margin:0 0 3px}
+.stagecard p{margin:0;color:var(--muted);font-size:13.5px}
+.stagecard .organs{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.stagecard .organs a{font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:3px 9px;background:var(--panel2)}
+.stagecard .organs a:hover{border-color:var(--accent);color:var(--ink)}
+.stagecard .spine{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);align-self:start}
+.stagecard .backbone{color:var(--gold)}
+
+.how{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:4px}
+@media(max-width:760px){.how{grid-template-columns:1fr}}
+.how .b{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.how .b h3{font-size:15px;font-family:var(--sans);font-weight:600;margin:0 0 6px}
+.how .b p{margin:0;color:var(--muted);font-size:13.5px}
+.honest{border:1px solid var(--line2);border-radius:14px;padding:18px;background:linear-gradient(180deg,var(--panel2),var(--panel));margin-top:6px}
+.honest .label{color:var(--warn)}
+.honest ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px}
+.honest li{margin:5px 0}
+
+footer{border-top:1px solid var(--line);padding:32px 0 64px;color:var(--faint);font-size:13px}
+footer .prov{color:var(--muted);margin-top:8px;font-size:12.5px;line-height:1.6;max-width:80ch}
+footer b{color:var(--ink);font-weight:500}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">FallKard · the sovereign node, made personal</div>
+    <h1>Open your kard.<br><span class="g">Become a sovereign node.</span></h1>
+    <p class="lede">FallKard is the one entry point that weaves the whole estate into a single flow. A kard is you-as-a-system — a portable, signed identity. Open it and your own node instantiates: your structure, your look, your memory, on your metal. It runs cheap, it's yours, and it's a node in the mesh. One kard at a time.</p>
+    <div class="flowline">
+      <span class="step">Acquire a kard</span><span class="arw">→</span>
+      <span class="step">Instantiate your node</span><span class="arw">→</span>
+      <span class="step">Run cheap</span><span class="arw">→</span>
+      <span class="step">Join the mesh</span>
+    </div>
+    <div class="chips">
+      <span class="chip"><b>Provable</b> — no LLM judge</span>
+      <span class="chip"><b>Sovereign</b> — your node, your data</span>
+      <span class="chip"><b>Cheap</b> — measured, not claimed</span>
+      <span class="chip">Kernel-backed · <b id="gateChip">witness-gated</b></span>
+    </div>
+  </header>
+
+  <!-- 1 · ACQUIRE + INSTANTIATE : the live spine -->
+  <section id="spine">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The spine, live</h2></div>
+    <p class="sec-sub">This is the real thing running in your browser on the gated kernels — nothing mocked. Mint a signed kard, open it to instantiate a node, and watch the identity, the capability check, and the uncrossable budget wall all enforce for real.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="label">1 · Mint a kard (your signed identity)</div>
+        <div class="controls">
+          <button id="mintBtn">Mint my kard</button>
+          <button class="ghost" id="downloadKard" disabled>Download kard</button>
+        </div>
+        <div class="kv" id="kardView" style="margin-top:12px">A kard carries an Ed25519 owner key, a skin + structure reference, a capability set, and an uncrossable budget — signed by the identity it names.</div>
+      </div>
+      <div class="panel">
+        <div class="label">2 · Open it → instantiate the node</div>
+        <div class="controls">
+          <button id="openBtn" disabled>Open my kard</button>
+          <button class="ghost" id="tamperBtn" disabled>Tamper &amp; re-open</button>
+        </div>
+        <div id="openView"></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="panel">
+        <div class="label">3 · The uncrossable budget wall</div>
+        <p class="meta" style="margin:0 0 10px">A node may spend up to its kard's budget — never past it. No capability, no signature, no caller can raise the ceiling.</p>
+        <div class="controls">
+          <button class="ghost" id="spendOk">Spend within budget</button>
+          <button class="ghost" id="spendOver">Try to overspend</button>
+        </div>
+        <div id="spendView"></div>
+      </div>
+      <div class="panel">
+        <div class="label">4 · Run cheap — the measured number</div>
+        <p class="meta" style="margin:0 0 10px">Render only what's in view, hold it while it stays, drop it when it leaves. Counted over a real usage path, with vs without.</p>
+        <div class="controls"><button class="ghost" id="cheapBtn">Measure it</button></div>
+        <div id="cheapView"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · SHAPE : one kard, two faces -->
+  <section id="faces">
+    <div class="sec-head"><span class="sec-num">02</span><h2>One kard, your face</h2></div>
+    <p class="sec-sub">The same structure — the same node — renders in whatever skin its owner brings. Konomi builds the structure (what it is); you own the skin (how it looks). Here is one workspace under two skins: same build, two faces, both fully yours.</p>
+    <div class="faces">
+      <div class="face"><div class="cap">Skin A · <span id="faceAName">—</span></div><div class="stage" id="faceA"></div></div>
+      <div class="face"><div class="cap">Skin B · <span id="faceBName">—</span></div><div class="stage" id="faceB"></div></div>
+    </div>
+    <div class="controls" style="margin-top:12px">
+      <button class="ghost" id="reskin">Swap both skins</button>
+      <a href="https://sjgant80-hub.github.io/konomi-skins/" target="_blank" rel="noopener"><button class="ghost">Open the full skin studio →</button></a>
+    </div>
+  </section>
+
+  <!-- 3 · THE WEAVE -->
+  <section id="weave">
+    <div class="sec-head"><span class="sec-num">03</span><h2>The whole weave</h2></div>
+    <p class="sec-sub">Everything in the estate is an organ of one flow. The kard is the spine; the trust rail runs underneath all of it. Each stage is live — open its organ.</p>
+    <div class="weave"><!--WEAVE_CARDS--></div>
+  </section>
+
+  <!-- 4 · HOW + HONEST -->
+  <section id="how">
+    <div class="sec-head"><span class="sec-num">04</span><h2>How it holds together</h2></div>
+    <div class="how">
+      <div class="b"><h3>Self-tailoring</h3><p>Your skin, your memory that learns from your work, your workspace structure. The build fits you — not you fitting a fixed interface.</p></div>
+      <div class="b"><h3>Self-cheapening</h3><p>Render only your point of view, recycle what you leave, run on your own metal. Tailored and cheap at once — the two things usually in tension.</p></div>
+      <div class="b"><h3>Sovereign</h3><p>Your node, your data, your model — signed to you, owned by you, verifiable by anyone. No account, no lock-in.</p></div>
+      <div class="b"><h3>The mesh, one kard at a time</h3><p>Each kard is a node. A million kards is a personalised sovereign mesh, entered one kard at a time. FallKard is the on-ramp.</p></div>
+    </div>
+    <div class="honest">
+      <div class="label">The honest wall</div>
+      <ul>
+        <li><b>Buildable:</b> every organ exists; FallKard composes them. The kard kernels are witness-gated.</li>
+        <li><b>Cheap is measured</b>, not claimed — the number above is counted render operations, with vs without.</li>
+        <li><b>The money-rail waits behind counsel.</b> The budget wall is real and enforced; selling kards or skins is gated off until the counsel + rail are in place.</li>
+        <li><b>The mesh is the next fold.</b> Today a kard is a real, verifiable sovereign node; full node-to-node federation is the layer being built on top.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div>FallKard — the sovereign node, made personal + cheap. Built by <b>Kar</b> (karma-didy) on the FallForge estate.</div>
+    <div class="prov" id="gateProv"></div>
+    <div class="prov">Provenance — <b>Konomi</b>, the structure system, is <b>Thomas Frumkin</b>&rsquo;s. The estate&rsquo;s mind and cost model build on the <b>Generalized Entropy Principle (GEP)</b> by <b>Gary W. Floyd</b> — Lumiea Systems Research Division, ThunderStruck Service LLC.</div>
+  </footer>
+
+</div>
+<script type="module">
+//<!--KERNEL_AND_UI-->
+</script>
+</body>
+</html>

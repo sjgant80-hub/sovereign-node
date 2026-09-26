@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FallKard — open your kard, become a sovereign node</title>
+<meta name="description" content="FallKard is the entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to instantiate your own sovereign node — your structure, your look, your memory, on your metal — run it cheap, and join the mesh. One kard at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "FallKard",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any (runs in the browser)",
+      "url": "https://sjgant80-hub.github.io/fallkard/",
+      "isAccessibleForFree": true,
+      "description": "FallKard is the entry point that weaves the FallForge estate into one flow: mint a signed kard, open it to instantiate your own sovereign node — your structure, your look, your memory, on your metal — run it cheap, and join the mesh.",
+      "creator": {
+        "@type": "Organization",
+        "name": "FallForge estate (Kar / karma-didy)"
+      },
+      "featureList": [
+        "Signed, self-sovereign kard identity (Ed25519)",
+        "Uncrossable per-kard budget wall",
+        "Measured render-on-observation + state-recycling (cheap is counted, not claimed)",
+        "Own your look — structure/skin split",
+        "Runs client-side, nothing sent anywhere"
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is a kard?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A portable, signed identity — an Ed25519 owner key plus a skin reference, a structure reference, a capability set and an uncrossable budget. Opening it instantiates your sovereign node. Only the identity it names can sign it."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How is \"cheap\" measured?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "By counting render operations over a real usage path, with render-on-observation + state-recycling vs rendering everything every step. The number on the page is that count — reproducible, no LLM judge."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can a node spend past its budget?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. The budget wall is enforced in the gated kernel — no capability, no signature, no caller can raise the ceiling a kard was minted with. Selling kards or skins waits behind counsel."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+<style>
+:root{
+  --bg:#080a0f; --bg2:#0c0f16; --panel:#11151e; --panel2:#161b26; --ink:#eef2f8; --muted:#9aa6b8; --faint:#69748a;
+  --line:#1f2634; --line2:#2b3444; --accent:#7cf3d0; --accent2:#5aa0ff; --accent-ink:#04140f;
+  --gold:#e9c46a; --warn:#f0a35e; --bad:#f8776b; --good:#54d68a;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --disp:'Fraunces',Georgia,serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(1200px 700px at 70% -10%, #10202a 0%, var(--bg) 55%) no-repeat, var(--bg);
+  color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+a{color:var(--accent)}
+h1,h2,h3{font-family:var(--disp);font-weight:600;text-wrap:balance;margin:0}
+code,.mono{font-family:var(--mono)}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+
+/* hero */
+.hero{padding:66px 0 30px}
+.hero h1{font-size:clamp(38px,7vw,72px);line-height:.99;letter-spacing:-.015em;margin:16px 0 0}
+.hero h1 .g{background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:64ch;margin:20px 0 0}
+.flowline{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px;align-items:center;font-family:var(--mono);font-size:13px}
+.flowline .step{border:1px solid var(--line2);border-radius:999px;padding:7px 14px;background:var(--panel);color:var(--ink)}
+.flowline .arw{color:var(--faint)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.chip{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line2);border-radius:999px;padding:5px 11px;background:var(--panel)}
+.chip b{color:var(--ink);font-weight:500}
+
+section{padding:30px 0;border-top:1px solid var(--line)}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+.sec-head h2{font-size:26px}
+.sec-num{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.sec-sub{color:var(--muted);max-width:70ch;margin:0 0 20px}
+
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.label{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:9px}
+.kv{font-family:var(--mono);font-size:12.5px;color:var(--muted);word-break:break-all;line-height:1.75}
+.kv b{color:var(--ink);font-weight:500}
+button{font-family:var(--sans);font-size:13px;font-weight:600;color:var(--accent-ink);background:var(--accent);
+  border:1px solid var(--accent);border-radius:10px;padding:10px 15px;cursor:pointer;transition:.13s}
+button:hover{filter:brightness(1.08)}
+button.ghost{background:transparent;color:var(--ink);border-color:var(--line2);font-weight:500}
+button.ghost:hover{border-color:var(--accent);color:#fff}
+button:disabled{opacity:.4;cursor:not-allowed}
+.controls{display:flex;flex-wrap:wrap;gap:9px;margin-top:4px}
+.verdict{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;border:1px solid var(--line2);background:var(--panel2);margin-top:12px}
+.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.st{font-family:var(--disp);font-size:20px;font-weight:600}
+.ok{color:var(--good)} .bg-ok{background:var(--good)} .no{color:var(--bad)} .bg-no{background:var(--bad)}
+.big{font-family:var(--disp);font-size:44px;font-weight:600;line-height:1}
+.meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* the two faces */
+.faces{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+@media(max-width:760px){.faces{grid-template-columns:1fr}}
+.face{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel2)}
+.face .cap{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:10px 12px 0}
+.stage{padding:12px;min-height:210px}
+
+/* the weave shelf */
+.weave{display:flex;flex-direction:column;gap:12px}
+.stagecard{display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center;border:1px solid var(--line);
+  border-radius:14px;padding:16px 18px;background:var(--panel)}
+.stagecard .n{font-family:var(--mono);font-size:13px;color:var(--accent);width:70px}
+.stagecard h3{font-size:18px;font-family:var(--sans);font-weight:600;margin:0 0 3px}
+.stagecard p{margin:0;color:var(--muted);font-size:13.5px}
+.stagecard .organs{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.stagecard .organs a{font-family:var(--mono);font-size:11.5px;text-decoration:none;color:var(--muted);border:1px solid var(--line2);border-radius:7px;padding:3px 9px;background:var(--panel2)}
+.stagecard .organs a:hover{border-color:var(--accent);color:var(--ink)}
+.stagecard .spine{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);align-self:start}
+.stagecard .backbone{color:var(--gold)}
+
+.how{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:4px}
+@media(max-width:760px){.how{grid-template-columns:1fr}}
+.how .b{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.how .b h3{font-size:15px;font-family:var(--sans);font-weight:600;margin:0 0 6px}
+.how .b p{margin:0;color:var(--muted);font-size:13.5px}
+.honest{border:1px solid var(--line2);border-radius:14px;padding:18px;background:linear-gradient(180deg,var(--panel2),var(--panel));margin-top:6px}
+.honest .label{color:var(--warn)}
+.honest ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px}
+.honest li{margin:5px 0}
+
+footer{border-top:1px solid var(--line);padding:32px 0 64px;color:var(--faint);font-size:13px}
+footer .prov{color:var(--muted);margin-top:8px;font-size:12.5px;line-height:1.6;max-width:80ch}
+footer b{color:var(--ink);font-weight:500}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">FallKard · the sovereign node, made personal</div>
+    <h1>Open your kard.<br><span class="g">Become a sovereign node.</span></h1>
+    <p class="lede">FallKard is the one entry point that weaves the whole estate into a single flow. A kard is you-as-a-system — a portable, signed identity. Open it and your own node instantiates: your structure, your look, your memory, on your metal. It runs cheap, it's yours, and it's a node in the mesh. One kard at a time.</p>
+    <div class="flowline">
+      <span class="step">Acquire a kard</span><span class="arw">→</span>
+      <span class="step">Instantiate your node</span><span class="arw">→</span>
+      <span class="step">Run cheap</span><span class="arw">→</span>
+      <span class="step">Join the mesh</span>
+    </div>
+    <div class="chips">
+      <span class="chip"><b>Provable</b> — no LLM judge</span>
+      <span class="chip"><b>Sovereign</b> — your node, your data</span>
+      <span class="chip"><b>Cheap</b> — measured, not claimed</span>
+      <span class="chip">Kernel-backed · <b id="gateChip">witness-gated</b></span>
+    </div>
+  </header>
+
+  <!-- 1 · ACQUIRE + INSTANTIATE : the live spine -->
+  <section id="spine">
+    <div class="sec-head"><span class="sec-num">01</span><h2>The spine, live</h2></div>
+    <p class="sec-sub">This is the real thing running in your browser on the gated kernels — nothing mocked. Mint a signed kard, open it to instantiate a node, and watch the identity, the capability check, and the uncrossable budget wall all enforce for real.</p>
+    <div class="grid2">
+      <div class="panel">
+        <div class="label">1 · Mint a kard (your signed identity)</div>
+        <div class="controls">
+          <button id="mintBtn">Mint my kard</button>
+          <button class="ghost" id="downloadKard" disabled>Download kard</button>
+        </div>
+        <div class="kv" id="kardView" style="margin-top:12px">A kard carries an Ed25519 owner key, a skin + structure reference, a capability set, and an uncrossable budget — signed by the identity it names.</div>
+      </div>
+      <div class="panel">
+        <div class="label">2 · Open it → instantiate the node</div>
+        <div class="controls">
+          <button id="openBtn" disabled>Open my kard</button>
+          <button class="ghost" id="tamperBtn" disabled>Tamper &amp; re-open</button>
+        </div>
+        <div id="openView"></div>
+      </div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="panel">
+        <div class="label">3 · The uncrossable budget wall</div>
+        <p class="meta" style="margin:0 0 10px">A node may spend up to its kard's budget — never past it. No capability, no signature, no caller can raise the ceiling.</p>
+        <div class="controls">
+          <button class="ghost" id="spendOk">Spend within budget</button>
+          <button class="ghost" id="spendOver">Try to overspend</button>
+        </div>
+        <div id="spendView"></div>
+      </div>
+      <div class="panel">
+        <div class="label">4 · Run cheap — the measured number</div>
+        <p class="meta" style="margin:0 0 10px">Render only what's in view, hold it while it stays, drop it when it leaves. Counted over a real usage path, with vs without.</p>
+        <div class="controls"><button class="ghost" id="cheapBtn">Measure it</button></div>
+        <div id="cheapView"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · SHAPE : one kard, two faces -->
+  <section id="faces">
+    <div class="sec-head"><span class="sec-num">02</span><h2>One kard, your face</h2></div>
+    <p class="sec-sub">The same structure — the same node — renders in whatever skin its owner brings. Konomi builds the structure (what it is); you own the skin (how it looks). Here is one workspace under two skins: same build, two faces, both fully yours.</p>
+    <div class="faces">
+      <div class="face"><div class="cap">Skin A · <span id="faceAName">—</span></div><div class="stage" id="faceA"></div></div>
+      <div class="face"><div class="cap">Skin B · <span id="faceBName">—</span></div><div class="stage" id="faceB"></div></div>
+    </div>
+    <div class="controls" style="margin-top:12px">
+      <button class="ghost" id="reskin">Swap both skins</button>
+      <a href="https://sjgant80-hub.github.io/konomi-skins/" target="_blank" rel="noopener"><button class="ghost">Open the full skin studio →</button></a>
+    </div>
+  </section>
+
+  <!-- 3 · THE WEAVE -->
+  <section id="weave">
+    <div class="sec-head"><span class="sec-num">03</span><h2>The whole weave</h2></div>
+    <p class="sec-sub">Everything in the estate is an organ of one flow. The kard is the spine; the trust rail runs underneath all of it. Each stage is live — open its organ.</p>
+    <div class="weave"><div class="stagecard"><div class="n">00</div><div><h3>Prove</h3><p>Nothing is trusted unless it is re-runnable proof — never an opinion from a model. This trust rail runs underneath every stage below.</p><div class="organs"><a href="https://sjgant80-hub.github.io/kar-hub/" target="_blank" rel="noopener">kar-hub · the verifier shelf →</a><a href="https://sjgant80-hub.github.io/kar-warden/" target="_blank" rel="noopener">kar-warden →</a><a href="https://sjgant80-hub.github.io/kar-citelock/" target="_blank" rel="noopener">kar-citelock →</a></div></div><div class="spine backbone">backbone</div></div>
+<div class="stagecard"><div class="n">01</div><div><h3>Acquire — mint your kard</h3><p>A kard is you-as-a-system: a portable, signed identity carrying your structure, your skin, your capabilities and an uncrossable budget. Forge it into a shareable card.</p><div class="organs"><a href="https://sjgant80-hub.github.io/fallkard-forge/" target="_blank" rel="noopener">fallkard-forge · a real build in a PNG →</a></div></div><div class="spine">spine</div></div>
+<div class="stagecard"><div class="n">02</div><div><h3>Instantiate — your node appears</h3><p>Opening the kard builds your node: Konomi assembles the structure, your skin renders it (same build, your face), your own memory loads — on your metal.</p><div class="organs"><a href="https://sjgant80-hub.github.io/konomi-skins/" target="_blank" rel="noopener">konomi-skins · own your look →</a><a href="https://sjgant80-hub.github.io/fallforgemint/" target="_blank" rel="noopener">fallforgemint · own your model →</a><a href="https://sjgant80-hub.github.io/kar-mind/" target="_blank" rel="noopener">kar-mind · your memory →</a></div></div><div class="spine">spine</div></div>
+<div class="stagecard"><div class="n">03</div><div><h3>Run cheap — measured</h3><p>Render only your point of view; hold what you keep looking at; recycle what you leave. Counted, with vs without — a real number, not a claim.</p><div class="organs"><a href="https://sjgant80-hub.github.io/kar-foldcycle/" target="_blank" rel="noopener">kar-foldcycle · recycle state →</a></div></div><div class="spine">spine</div></div>
+<div class="stagecard"><div class="n">04</div><div><h3>Join the mesh</h3><p>Each kard is a node. A million kards is a personalised sovereign mesh — the chord, not the merge — entered one kard at a time. FallKard is the on-ramp.</p><div class="organs"><a href="https://sjgant80-hub.github.io/fallkit/" target="_blank" rel="noopener">assemble a whole node · fallkit →</a></div></div><div class="spine">spine</div></div></div>
+  </section>
+
+  <!-- 4 · HOW + HONEST -->
+  <section id="how">
+    <div class="sec-head"><span class="sec-num">04</span><h2>How it holds together</h2></div>
+    <div class="how">
+      <div class="b"><h3>Self-tailoring</h3><p>Your skin, your memory that learns from your work, your workspace structure. The build fits you — not you fitting a fixed interface.</p></div>
+      <div class="b"><h3>Self-cheapening</h3><p>Render only your point of view, recycle what you leave, run on your own metal. Tailored and cheap at once — the two things usually in tension.</p></div>
+      <div class="b"><h3>Sovereign</h3><p>Your node, your data, your model — signed to you, owned by you, verifiable by anyone. No account, no lock-in.</p></div>
+      <div class="b"><h3>The mesh, one kard at a time</h3><p>Each kard is a node. A million kards is a personalised sovereign mesh, entered one kard at a time. FallKard is the on-ramp.</p></div>
+    </div>
+    <div class="honest">
+      <div class="label">The honest wall</div>
+      <ul>
+        <li><b>Buildable:</b> every organ exists; FallKard composes them. The kard kernels are witness-gated.</li>
+        <li><b>Cheap is measured</b>, not claimed — the number above is counted render operations, with vs without.</li>
+        <li><b>The money-rail waits behind counsel.</b> The budget wall is real and enforced; selling kards or skins is gated off until the counsel + rail are in place.</li>
+        <li><b>The mesh is the next fold.</b> Today a kard is a real, verifiable sovereign node; full node-to-node federation is the layer being built on top.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div>FallKard — the sovereign node, made personal + cheap. Built by <b>Kar</b> (karma-didy) on the FallForge estate.</div>
+    <div class="prov" id="gateProv"></div>
+    <div class="prov">Provenance — <b>Konomi</b>, the structure system, is <b>Thomas Frumkin</b>&rsquo;s. The estate&rsquo;s mind and cost model build on the <b>Generalized Entropy Principle (GEP)</b> by <b>Gary W. Floyd</b> — Lumiea Systems Research Division, ThunderStruck Service LLC.</div>
+  </footer>
+
+</div>
+<script type="module">
+// FallKard — the kard kernel: a sovereign node's portable, signed identity.
+//
+// A KARD is a person-as-a-system: a portable record that says WHO the node is (an Ed25519 public key),
+// WHAT it carries (a skin reference + a structure reference + a node config), and WHAT it may do (a
+// capability set) up to an UNCROSSABLE BUDGET. Opening a kard instantiates a sovereign node — its own
+// structure, its own look, its own memory, on its own metal. The kard travels as a file; anyone can
+// verify it, no one can forge it, and no capability can spend past the budget the kard was minted with.
+//
+// The signature bytes are made and checked at the edge (WebCrypto Ed25519); this kernel pins exactly WHAT
+// is signed and enforces the identity + capability + budget invariants. No I/O. Pure and total: garbage
+// in -> { ok:false, why }, never a throw.
+
+export const KARD_KIND = 'fallkard-v1';
+export const MAX_CAPS = 64;
+export const MAX_REF = 512;        // a skin/structure reference (a hash, id, or short URL)
+export const MAX_LABEL = 120;
+
+const isStr = (v) => typeof v === 'string';
+const isInt = (v) => Number.isInteger(v);
+const isNum = (v) => typeof v === 'number' && Number.isFinite(v);
+const isObj = (v) => typeof v === 'object' && v !== null && !Array.isArray(v);
+const isArr = (v) => Array.isArray(v);
+const HEX = /^[0-9a-f]+$/;
+const isPub = (v) => isStr(v) && v.length === 64 && HEX.test(v);   // Ed25519 public key = 32 bytes
+const isSig = (v) => isStr(v) && v.length === 128 && HEX.test(v);  // Ed25519 signature = 64 bytes
+const isSpend = (v) => isNum(v) && v >= 0;                          // a spend/cost is a finite amount, zero or more
+
+// ── SHA-256 + canonical JSON (the estate's proven pair — the same bytes the gate runs on) ─────────
+const K256 = new Uint32Array([
+  0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+  0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+  0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+  0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+  0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+  0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+  0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+  0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
+]);
+
+export function sha256(text) {
+  if (!isStr(text)) return { ok: false, why: 'sha256 takes a string' };
+  const data = new TextEncoder().encode(text);
+  const len = data.length;
+  const padded = new Uint8Array((((len + 8) >> 6) << 6) + 64);
+  padded.set(data);
+  padded[len] = 0x80;
+  const dv = new DataView(padded.buffer);
+  const bitLen = len * 8;
+  dv.setUint32(padded.length - 8, Math.floor(bitLen / 4294967296));
+  dv.setUint32(padded.length - 4, bitLen >>> 0);
+  let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
+  let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+  const w = new Uint32Array(64);
+  for (let i = 0; i < padded.length; i += 64) {
+    for (let t = 0; t < 16; t++) w[t] = dv.getUint32(i + t * 4);
+    for (let t = 16; t < 64; t++) {
+      const x = w[t - 15], y = w[t - 2];
+      const s0 = (((x >>> 7) | (x << 25)) ^ ((x >>> 18) | (x << 14)) ^ (x >>> 3)) >>> 0;
+      const s1 = (((y >>> 17) | (y << 15)) ^ ((y >>> 19) | (y << 13)) ^ (y >>> 10)) >>> 0;
+      w[t] = (w[t - 16] + s0 + w[t - 7] + s1) >>> 0;
+    }
+    let a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, hh = h7;
+    for (let t = 0; t < 64; t++) {
+      const S1 = (((e >>> 6) | (e << 26)) ^ ((e >>> 11) | (e << 21)) ^ ((e >>> 25) | (e << 7))) >>> 0;
+      const ch = ((e & f) ^ (~e & g)) >>> 0;
+      const t1 = (hh + S1 + ch + K256[t] + w[t]) >>> 0;
+      const S0 = (((a >>> 2) | (a << 30)) ^ ((a >>> 13) | (a << 19)) ^ ((a >>> 22) | (a << 10))) >>> 0;
+      const maj = ((a & b) ^ (a & c) ^ (b & c)) >>> 0;
+      const t2 = (S0 + maj) >>> 0;
+      hh = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+    }
+    h0 = (h0 + a) >>> 0; h1 = (h1 + b) >>> 0; h2 = (h2 + c) >>> 0; h3 = (h3 + d) >>> 0;
+    h4 = (h4 + e) >>> 0; h5 = (h5 + f) >>> 0; h6 = (h6 + g) >>> 0; h7 = (h7 + hh) >>> 0;
+  }
+  const hex = (n) => n.toString(16).padStart(8, '0');
+  return { ok: true, hash: hex(h0) + hex(h1) + hex(h2) + hex(h3) + hex(h4) + hex(h5) + hex(h6) + hex(h7) };
+}
+
+export function canon(v) {
+  if (v === null || typeof v === 'number' || typeof v === 'boolean') return JSON.stringify(v);
+  if (typeof v === 'string') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(canon).join(',') + ']';
+  if (typeof v === 'object') return '{' + Object.keys(v).sort().map((k) => JSON.stringify(k) + ':' + canon(v[k])).join(',') + '}';
+  return '"?"';
+}
+
+// ── the kard body: what a node IS + carries + may do ──────────────────────────────────────────────
+function validCaps(caps) {
+  if (!isArr(caps)) return { ok: false, why: 'capabilities must be an array of strings' };
+  if (caps.length > MAX_CAPS) return { ok: false, why: 'more than ' + MAX_CAPS + ' capabilities' };
+  const seen = new Set();
+  for (const [i, c] of caps.entries()) {
+    if (!isStr(c) || c.trim().length === 0) return { ok: false, why: 'capability ' + i + ' must be a non-empty string' };
+    if (seen.has(c)) return { ok: false, why: 'duplicate capability: ' + c };
+    seen.add(c);
+  }
+  return { ok: true };
+}
+
+/** mintKard(input) — assemble a node's identity into a canonical, self-hashed kard body (unsigned).
+ *  input: { owner (Ed25519 pubkey hex), skinRef, structureRef, capabilities[], budgetCap, createdAt, label? } */
+export function mintKard(input) {
+  if (!isObj(input)) return { ok: false, why: 'mintKard takes an object' };
+  const { owner, skinRef, structureRef, capabilities, budgetCap, createdAt, label } = input;
+  if (!isPub(owner)) return { ok: false, why: 'owner must be an Ed25519 public key (64 hex characters)' };
+  for (const [name, val] of [['skinRef', skinRef], ['structureRef', structureRef]]) {
+    if (!isStr(val) || val.trim().length === 0) return { ok: false, why: name + ' must be a non-empty string (a hash, id or short URL)' };
+    if (val.length > MAX_REF) return { ok: false, why: name + ' exceeds ' + MAX_REF + ' characters' };
+  }
+  const cv = validCaps(capabilities);
+  if (!cv.ok) return cv;
+  if (!isNum(budgetCap)) return { ok: false, why: 'budgetCap must be a number (the uncrossable spend ceiling)' };
+  if (budgetCap < 0) return { ok: false, why: 'budgetCap cannot be negative' };
+  if (!isStr(createdAt) || createdAt.trim().length === 0) return { ok: false, why: 'a kard needs a createdAt timestamp' };
+  if (label !== undefined) {
+    if (!isStr(label)) return { ok: false, why: 'label must be a string when present' };
+    if (label.length > MAX_LABEL) return { ok: false, why: 'label exceeds ' + MAX_LABEL + ' characters' };
+  }
+  const body = {
+    v: 1,
+    kind: KARD_KIND,
+    owner,
+    skinRef, structureRef,
+    capabilities: capabilities.slice(),
+    budgetCap,
+    label: label === undefined ? '' : label,
+    createdAt,
+    scope: 'A kard is a sovereign node: its own structure, its own look, its own memory, on its own metal. Capabilities are exercisable only up to budgetCap; nothing signed can raise that ceiling.',
+  };
+  const h = sha256(canon(body));
+  if (!h.ok) return { ok: false, why: h.why };
+  return { ok: true, kard: { ...body, hash: h.hash } };
+}
+
+/** kardSignable(kard) — the EXACT canonical bytes an Ed25519 signature covers: the kard minus its
+ *  signature. Used to sign AND to verify, so both sides canonicalise identically. */
+export function kardSignable(kard) {
+  if (!isObj(kard) || kard.kind !== KARD_KIND || !isStr(kard.hash)) return { ok: false, why: 'not a fallkard' };
+  const body = { ...kard };
+  delete body.signature;
+  return { ok: true, payload: canon(body) };
+}
+
+/** attachSignature(kard, pubHex, sigHex) — bind the owner's Ed25519 signature. The signing key MUST be
+ *  the kard's declared owner (self-sovereign: a kard is signed by the identity it names, no one else). */
+export function attachSignature(kard, pubHex, sigHex) {
+  const s = kardSignable(kard);
+  if (!s.ok) return s;
+  if (!isPub(pubHex)) return { ok: false, why: 'public key must be an Ed25519 key (64 hex characters)' };
+  if (pubHex !== kard.owner) return { ok: false, why: 'the signing key is not the kard owner — a kard is signed by the node it names' };
+  if (!isSig(sigHex)) return { ok: false, why: 'an Ed25519 signature is 128 hex chars' };
+  return { ok: true, kard: { ...kard, signature: { alg: 'Ed25519', pub: pubHex, sig: sigHex } } };
+}
+
+/** verifyKard(kard) — internal consistency: the facts match their own hash, the owner is well-formed,
+ *  and (if signed) the signature names the owner. The signature BYTES are checked at the edge over
+ *  kardSignable(); this kernel pins what is signed and enforces the identity invariant. */
+export function verifyKard(kard) {
+  if (!isObj(kard) || kard.kind !== KARD_KIND || !isStr(kard.hash)) return { ok: false, why: 'not a fallkard' };
+  const body = { ...kard };
+  delete body.hash;
+  delete body.signature;
+  const h = sha256(canon(body));
+  if (!h.ok) return { ok: false, why: h.why };
+  if (h.hash !== kard.hash) return { ok: true, valid: false, why: 'the kard does not match its own fingerprint — it was changed after it was minted' };
+  if (!isPub(kard.owner)) return { ok: true, valid: false, why: 'the kard owner is not a well-formed Ed25519 key' };
+  if (kard.signature !== undefined) {
+    if (!isObj(kard.signature) || kard.signature.alg !== 'Ed25519') return { ok: true, valid: false, why: 'malformed signature block' };
+    if (kard.signature.pub !== kard.owner) return { ok: true, valid: false, why: 'the signature key is not the kard owner' };
+  }
+  return { ok: true, valid: true, signed: kard.signature !== undefined, owner: kard.owner, why: 'kard intact' };
+}
+
+// ── the uncrossable budget wall (the money-rail boundary, real — not a stub) ───────────────────────
+/** spendGate(kard, priorSpent, cost) — a node may exercise a capability only if the running spend
+ *  stays at or under the kard's budgetCap. This is the wall the estate's money-rail sits behind:
+ *  no capability, no signature, no caller can spend past the ceiling the kard was minted with. */
+export function spendGate(kard, priorSpent, cost) {
+  const v = verifyKard(kard);
+  if (!v.ok) return { ok: false, why: v.why };
+  if (!v.valid) return { ok: true, allowed: false, why: 'the kard is not valid: ' + v.why };
+  if (!isSpend(priorSpent)) return { ok: false, why: 'priorSpent must be a finite number, zero or more' };
+  if (!isSpend(cost)) return { ok: false, why: 'cost must be a finite number, zero or more' };
+  const total = priorSpent + cost;
+  if (total > kard.budgetCap) {
+    return { ok: true, allowed: false, remaining: Math.max(0, kard.budgetCap - priorSpent), why: 'refused — this would spend ' + total + ' past the kard budget of ' + kard.budgetCap };
+  }
+  return { ok: true, allowed: true, remaining: kard.budgetCap - total, why: 'within budget' };
+}
+
+/** canOpen(kard, node) — a node can open a kard when the kard is valid and the node presents the
+ *  capabilities the kard requires to instantiate (its structure + skin). Opening never exceeds budget. */
+export function canOpen(kard, node) {
+  const v = verifyKard(kard);
+  if (!v.ok) return { ok: false, why: v.why };
+  if (!v.valid) return { ok: true, canOpen: false, why: 'the kard is not valid: ' + v.why };
+  if (!isObj(node)) return { ok: false, why: 'node must be an object { capabilities }' };
+  if (!isArr(node.capabilities)) return { ok: false, why: 'node.capabilities must be an array' };
+  const held = new Set(node.capabilities);
+  const missing = [];
+  for (const c of kard.capabilities) {
+    if (!held.has(c)) missing.push(c);
+  }
+  if (missing.length > 0) return { ok: true, canOpen: false, missing, why: 'the opening node lacks required capabilities: ' + missing.join(', ') };
+  return { ok: true, canOpen: true, skinRef: kard.skinRef, structureRef: kard.structureRef, why: 'ready to instantiate the node' };
+}
+
+
+/* ── flow.mjs ── */
+// FallKard — the open-flow + the measured cheap-run kernel.
+//
+// OPEN: opening a verified kard, on a node that holds its required capabilities, yields an instantiation
+// plan — which structure to build, which skin to render it in. (The structure is rendered by the reused
+// Konomi Skins renderer; the memory loads from the node's own store; this kernel decides WHAT opens.)
+//
+// CHEAP: two mechanisms, and a REAL counted measurement of them — not a claim.
+//   · render-on-observation: render only the components currently in view, not the whole structure.
+//   · state-recycling: when a component is already rendered and still in view, keep it — do not re-render.
+// runCost counts render operations over a real usage sequence WITH both vs WITHOUT (render everything,
+// every step); cheapVerdict reports the measured saving and WIN / LEARN. The numbers come from counting
+// what actually happens, so anyone re-running the same sequence gets the same verdict.
+//
+// No I/O. Pure and total: garbage in -> { ok:false, why }, never a throw.
+
+/* kard.mjs inlined above */
+/* isStr from kard.mjs */
+/* isArr from kard.mjs */
+export const MAX_COMPONENTS = 2000;
+export const MAX_STEPS = 5000;
+
+/** openKard(kard, node) — the open-flow: a valid kard opened by a capable node yields its instantiation
+ *  plan. Refuses a tampered kard or a node that lacks the kard's required capabilities. */
+export function openKard(kard, node) {
+  const v = verifyKard(kard);
+  if (!v.ok) return { ok: false, why: v.why };
+  if (!v.valid) return { ok: true, opened: false, why: 'the kard is not valid: ' + v.why };
+  const c = canOpen(kard, node);
+  if (!c.ok) return { ok: false, why: c.why };
+  if (!c.canOpen) return { ok: true, opened: false, missing: c.missing, why: c.why };
+  return {
+    ok: true,
+    opened: true,
+    node: { owner: kard.owner, structureRef: kard.structureRef, skinRef: kard.skinRef, budgetCap: kard.budgetCap },
+    why: 'node instantiated — build ' + kard.structureRef + ' in ' + kard.skinRef,
+  };
+}
+
+// ── the cheap-run measurement (render-on-observation + state-recycling), counted ───────────────────
+function validSequence(componentIds, steps) {
+  if (!isArr(componentIds) || componentIds.length === 0) return { ok: false, why: 'componentIds must be a non-empty array' };
+  if (componentIds.length > MAX_COMPONENTS) return { ok: false, why: 'more than ' + MAX_COMPONENTS + ' components' };
+  const known = new Set();
+  for (const [i, id] of componentIds.entries()) {
+    if (!isStr(id) || id.length === 0) return { ok: false, why: 'component id ' + i + ' must be a non-empty string' };
+    if (known.has(id)) return { ok: false, why: 'duplicate component id: ' + id };
+    known.add(id);
+  }
+  if (!isArr(steps) || steps.length === 0) return { ok: false, why: 'steps must be a non-empty array of visible-id lists' };
+  if (steps.length > MAX_STEPS) return { ok: false, why: 'more than ' + MAX_STEPS + ' steps' };
+  for (const [i, step] of steps.entries()) {
+    if (!isArr(step)) return { ok: false, why: 'step ' + i + ' must be an array of visible component ids' };
+    for (const id of step) {
+      if (!known.has(id)) return { ok: false, why: 'step ' + i + ' references unknown component ' + id };
+    }
+  }
+  return { ok: true, known };
+}
+
+/** runCost(componentIds, steps, mode) — count render operations over a usage sequence.
+ *  steps[i] = the ids visible at step i.
+ *  mode 'full'         : render every component every step (no POV, no recycling).
+ *  mode 'pov+recycle'  : render a component at a step only if it is visible AND was not already rendered
+ *                        and still-held from the previous step (a component leaving view drops its hold). */
+export function runCost(componentIds, steps, mode) {
+  const v = validSequence(componentIds, steps);
+  if (!v.ok) return { ok: false, why: v.why };
+  if (mode !== 'full' && mode !== 'pov+recycle') return { ok: false, why: "mode must be 'full' or 'pov+recycle'" };
+  const total = componentIds.length;
+  if (mode === 'full') {
+    return { ok: true, ops: total * steps.length, mode, steps: steps.length };
+  }
+  let ops = 0;
+  let held = new Set();
+  for (const step of steps) {
+    const visible = new Set(step);
+    const nextHeld = new Set();
+    for (const id of visible) {
+      if (!held.has(id)) ops += 1; // render only the newly-visible-and-not-held
+      nextHeld.add(id);            // now rendered and held while it stays in view
+    }
+    held = nextHeld;               // components no longer visible drop their hold (must re-render if they return)
+  }
+  return { ok: true, ops, mode, steps: steps.length };
+}
+
+/** cheapVerdict(componentIds, steps) — the measured with-vs-without result. */
+export function cheapVerdict(componentIds, steps) {
+  const full = runCost(componentIds, steps, 'full');
+  if (!full.ok) return { ok: false, why: full.why };
+  const cheap = runCost(componentIds, steps, 'pov+recycle');
+  if (!cheap.ok) return { ok: false, why: cheap.why };
+  const savedPct = full.ops === 0 ? 0 : Math.round(((full.ops - cheap.ops) / full.ops) * 1000) / 10;
+  const cheaper = cheap.ops < full.ops;
+  return {
+    ok: true,
+    full: full.ops,
+    cheap: cheap.ops,
+    savedPct,
+    verdict: cheaper ? 'WIN' : 'LEARN',
+    why: cheaper
+      ? 'measured ' + savedPct + '% fewer render operations rendering only what is in view and holding it while it stays'
+      : 'no measured saving on this sequence — the overhead did not net out',
+  };
+}
+
+
+/* ── UI ── */
+/* FallKard — the front-door wiring. Uses the REAL gated kernels (kard.mjs + flow.mjs, concatenated above
+   this in the module) — mintKard / attachSignature / verifyKard / spendGate / openKard / cheapVerdict.
+   Real Ed25519 via WebCrypto. A compact real structure-in-skin render for the two faces. No mocks. */
+const $ = (s) => document.querySelector(s);
+const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt !== undefined) e.textContent = txt; return e; };
+const now = () => new Date().toISOString();
+const short = (h) => (typeof h === 'string' && h.length > 20) ? h.slice(0, 10) + '…' + h.slice(-6) : String(h);
+function hex(buf) { return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, '0')).join(''); }
+function unhex(s) { return Uint8Array.from(s.match(/../g).map((h) => parseInt(h, 16))); }
+
+const GATE = 'kard 54/55 · flow 15/15';
+$('#gateChip').textContent = 'witness ' + GATE;
+$('#gateProv').textContent = 'Kernels: kard.mjs (witness 54/55, 1 argued equivalent) + flow.mjs (witness 15/15). The page inlines the gated kernels — the logic you see run is the logic the gate proves. CI re-runs both suites + the mutation gate on GitHub’s runner.';
+
+// ── the live spine: mint → open → verify → spend → cheap ─────────────────────────────────────────
+let keypair = null, myKard = null, opened = null;
+const NODE = { capabilities: ['render:structure', 'load:memory', 'net:none'] }; // this browser, as an opening node
+
+$('#mintBtn').addEventListener('click', async () => {
+  try {
+    keypair = await crypto.subtle.generateKey({ name: 'Ed25519' }, true, ['sign', 'verify']);
+    const pub = hex(await crypto.subtle.exportKey('raw', keypair.publicKey));
+    const m = mintKard({
+      owner: pub, skinRef: 'skin:aurora@1', structureRef: 'struct:workspace@1',
+      capabilities: ['render:structure', 'load:memory'], budgetCap: 100,
+      label: 'my sovereign node', createdAt: now(),
+    });
+    if (!m.ok) { $('#kardView').innerHTML = '<span class="no">' + m.why + '</span>'; return; }
+    const s = kardSignable(m.kard);
+    const sig = hex(await crypto.subtle.sign({ name: 'Ed25519' }, keypair.privateKey, new TextEncoder().encode(s.payload)));
+    const signed = attachSignature(m.kard, pub, sig);
+    myKard = signed.kard;
+    $('#kardView').innerHTML =
+      'owner · <b>' + short(pub) + '</b> (Ed25519, yours)<br>' +
+      'carries · <b>' + myKard.structureRef + '</b> in <b>' + myKard.skinRef + '</b><br>' +
+      'capabilities · <b>' + myKard.capabilities.join(', ') + '</b><br>' +
+      'budget · <b>' + myKard.budgetCap + '</b> · signed ✎ <b>' + short(myKard.hash) + '</b>';
+    $('#openBtn').disabled = false; $('#tamperBtn').disabled = false; $('#downloadKard').disabled = false;
+  } catch (e) {
+    $('#kardView').innerHTML = '<span class="no">This browser has no WebCrypto Ed25519 — mint needs it.</span>';
+  }
+});
+$('#downloadKard').addEventListener('click', () => {
+  if (!myKard) return;
+  const blob = new Blob([JSON.stringify(myKard, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'my.kard.json'; a.click(); URL.revokeObjectURL(a.href);
+});
+
+async function verifySig(kard) {
+  if (!kard.signature) return false;
+  try {
+    const s = kardSignable(kard);
+    const key = await crypto.subtle.importKey('raw', unhex(kard.signature.pub), { name: 'Ed25519' }, false, ['verify']);
+    return await crypto.subtle.verify({ name: 'Ed25519' }, key, unhex(kard.signature.sig), new TextEncoder().encode(s.payload));
+  } catch (_) { return false; }
+}
+
+async function doOpen(kard) {
+  const box = $('#openView');
+  const v = verifyKard(kard);
+  const sigOk = await verifySig(kard);
+  const r = openKard(kard, NODE);
+  if (r.ok && r.opened && v.valid && sigOk) {
+    box.innerHTML =
+      '<div class="verdict"><span class="dot bg-ok"></span><span class="st ok">NODE INSTANTIATED</span></div>' +
+      '<div class="meta" style="margin-top:8px">signature verified · owner ' + short(kard.owner) + '<br>building <b>' + kard.structureRef + '</b> in <b>' + kard.skinRef + '</b> — your structure, your face, your metal.</div>';
+    opened = r.node;
+  } else {
+    const why = !sigOk && v.valid ? 'the signature does not verify' : (v.valid ? r.why : v.why);
+    box.innerHTML = '<div class="verdict"><span class="dot bg-no"></span><span class="st no">REFUSED</span></div>' +
+      '<div class="meta" style="margin-top:8px">' + why + '</div>';
+  }
+}
+$('#openBtn').addEventListener('click', () => { if (myKard) doOpen(myKard); });
+$('#tamperBtn').addEventListener('click', () => {
+  if (!myKard) return;
+  const tampered = { ...myKard, budgetCap: 999999 }; // try to raise the ceiling after signing
+  doOpen(tampered);
+});
+
+$('#spendOk').addEventListener('click', () => {
+  if (!myKard) { $('#spendView').innerHTML = '<div class="meta no">Mint a kard first.</div>'; return; }
+  const r = spendGate(myKard, 40, 30); // 70 of 100
+  $('#spendView').innerHTML = '<div class="verdict"><span class="dot bg-ok"></span><span class="st ok">ALLOWED</span>' +
+    '<span class="meta" style="margin-left:auto">70 / ' + myKard.budgetCap + ' · ' + r.remaining + ' left</span></div>';
+});
+$('#spendOver').addEventListener('click', () => {
+  if (!myKard) { $('#spendView').innerHTML = '<div class="meta no">Mint a kard first.</div>'; return; }
+  const r = spendGate(myKard, 90, 40); // 130 of 100
+  $('#spendView').innerHTML = '<div class="verdict"><span class="dot bg-no"></span><span class="st no">REFUSED</span>' +
+    '<span class="meta" style="margin-left:auto">' + r.remaining + ' left · wall holds</span></div>' +
+    '<div class="meta" style="margin-top:6px">' + r.why + '</div>';
+});
+
+$('#cheapBtn').addEventListener('click', () => {
+  // a real usage path over a 6-component workspace: the viewport moves; count render ops with vs without.
+  const comps = ['nav', 'stats', 'chat', 'memory', 'files', 'settings'];
+  const steps = [
+    ['nav', 'stats', 'chat'], ['nav', 'chat', 'memory'], ['nav', 'memory', 'files'],
+    ['nav', 'files', 'chat'], ['nav', 'chat', 'stats'], ['nav', 'stats'],
+  ];
+  const v = cheapVerdict(comps, steps);
+  const cls = v.verdict === 'WIN' ? 'ok' : 'no';
+  $('#cheapView').innerHTML =
+    '<div style="display:flex;align-items:baseline;gap:14px;margin-top:6px"><span class="big ' + cls + '">' + v.savedPct + '%</span>' +
+    '<span class="meta">fewer render operations<br><b>' + v.cheap + '</b> vs <b>' + v.full + '</b> (' + v.verdict + ')</span></div>' +
+    '<div class="meta" style="margin-top:8px">' + v.why + '</div>';
+});
+
+// ── one kard, two faces: a real compact structure rendered under two real skins ────────────────────
+const STRUCTURE = {
+  nav: ['Home', 'Work', 'Memory'],
+  stats: [['Nodes', '1'], ['Budget', '100'], ['Cheap', '58%']],
+  convo: ['open your kard', 'your node is yours', 'run it cheap'],
+};
+const SKINS = [
+  { name: 'aurora', bg: '#0b1418', surface: '#12212a', ink: '#e7fbff', accent: '#6ff2d4', radius: '14px', font: "'IBM Plex Sans',sans-serif", pill: '999px' },
+  { name: 'brutalist', bg: '#f4f1ea', surface: '#fffdf7', ink: '#141210', accent: '#ff5c2b', radius: '0px', font: "'IBM Plex Mono',monospace", pill: '0px' },
+  { name: 'cyber', bg: '#08070d', surface: '#120c1e', ink: '#f0e9ff', accent: '#c86bff', radius: '4px', font: "'IBM Plex Mono',monospace", pill: '3px' },
+  { name: 'cozy', bg: '#211a17', surface: '#2c231e', ink: '#f6ece2', accent: '#e9a35e', radius: '18px', font: "'Fraunces',serif", pill: '999px' },
+];
+function renderWorkspace(structure, skin, container) {
+  container.innerHTML = '';
+  const app = el('div');
+  app.style.cssText = 'background:' + skin.bg + ';color:' + skin.ink + ';font-family:' + skin.font + ';border-radius:' + skin.radius + ';padding:12px;height:100%';
+  const nav = el('div'); nav.style.cssText = 'display:flex;gap:8px;margin-bottom:10px';
+  structure.nav.forEach((n, i) => { const b = el('span', null, n); b.style.cssText = 'font-size:11px;padding:4px 10px;border-radius:' + skin.pill + ';background:' + (i === 0 ? skin.accent : skin.surface) + ';color:' + (i === 0 ? skin.bg : skin.ink); nav.appendChild(b); });
+  app.appendChild(nav);
+  const stats = el('div'); stats.style.cssText = 'display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px';
+  structure.stats.forEach(([k, val]) => { const c = el('div'); c.style.cssText = 'background:' + skin.surface + ';border-radius:' + skin.radius + ';padding:8px'; c.innerHTML = '<div style="font-size:9px;opacity:.6;text-transform:uppercase;letter-spacing:.08em">' + k + '</div><div style="font-size:18px;font-weight:600;color:' + skin.accent + '">' + val + '</div>'; stats.appendChild(c); });
+  app.appendChild(stats);
+  const chat = el('div'); chat.style.cssText = 'background:' + skin.surface + ';border-radius:' + skin.radius + ';padding:8px;display:flex;flex-direction:column;gap:5px';
+  structure.convo.forEach((m) => { const bub = el('div', null, m); bub.style.cssText = 'font-size:11px;padding:5px 9px;border-radius:' + skin.pill + ';background:' + skin.bg + ';align-self:flex-start;max-width:85%'; chat.appendChild(bub); });
+  app.appendChild(chat);
+  container.appendChild(app);
+}
+let faceIdx = 0;
+function paintFaces() {
+  const a = SKINS[faceIdx % SKINS.length], b = SKINS[(faceIdx + 1) % SKINS.length];
+  $('#faceAName').textContent = a.name; $('#faceBName').textContent = b.name;
+  renderWorkspace(STRUCTURE, a, $('#faceA'));
+  renderWorkspace(STRUCTURE, b, $('#faceB'));
+}
+$('#reskin').addEventListener('click', () => { faceIdx = (faceIdx + 2) % SKINS.length; paintFaces(); });
+paintFaces();
+
+</script>
+</body>
+</html>

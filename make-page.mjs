@@ -28,7 +28,7 @@ const WEAVE = [
   { n: '03', tag: 'flow', spine: true, title: 'Run it light', desc: 'It draws only what you are looking at and reuses what stays on screen. Counted, with vs without — a real number, not a claim.',
     organs: [['kar-foldcycle · recycle state', B + 'kar-foldcycle/']] },
   { n: '04', tag: 'flow', spine: true, title: 'Join up', desc: 'Each kard is a node. Many kards make a personal network you enter one kard at a time. FallKard is the on-ramp.',
-    organs: [['assemble a whole node · fallkit', B + 'fallkit/']] },
+    organs: [['assemble a whole node · fall-architect', B + 'fall-architect/']] },
 ];
 const weaveHtml = WEAVE.map((s) =>
   '<div class="stagecard"><div class="n">' + s.n + '</div>' +

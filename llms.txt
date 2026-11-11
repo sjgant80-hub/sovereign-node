@@ -25,4 +25,4 @@ federation is the next layer.
 
 ## Credit
 Konomi (the structure system) — Thomas Frumkin. The Generalized Entropy Principle (GEP) — Gary W. Floyd,
-Lumiea Systems Research Division / ThunderStruck Service LLC. Built by Kar (karma-didy) on the FallForge estate.
+Lumiea Systems Research Division / ThunderStruck Service LLC. Built by Kar for AI Native Solutions.

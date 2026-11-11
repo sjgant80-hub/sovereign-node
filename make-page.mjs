@@ -58,7 +58,7 @@ const schema = {
       '@type': 'SoftwareApplication', name: 'FallKard', applicationCategory: 'DeveloperApplication',
       operatingSystem: 'Any (runs in the browser)', url: B + 'sovereign-node/', isAccessibleForFree: true,
       description: 'FallKard turns the tools you use into something you own: get a signed kard, open it, and your own workspace appears — on your machine, in a look you choose. No account, no monthly rent; everything runs client-side. Pick your look from a locker of skins; the spending cap is enforced in a witness-gated kernel.',
-      creator: { '@type': 'Organization', name: 'FallForge estate (Kar / karma-didy)' },
+      creator: { '@type': 'Organization', name: 'AI Native Solutions (Kar)' },
       featureList: [
         'You own your copy — a signed, self-sovereign identity (Ed25519)',
         'Opens on your own machine; nothing sent anywhere',

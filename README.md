@@ -26,4 +26,4 @@ mesh federation is the next layer being built on top.
 ## Provenance & credit
 **Konomi** (the structure system) — **Thomas Frumkin**. The estate's mind and cost model build on the
 **Generalized Entropy Principle (GEP)** — **Gary W. Floyd**, Lumiea Systems Research Division /
-ThunderStruck Service LLC. Built by **Kar** (karma-didy) on the FallForge estate.
+ThunderStruck Service LLC. Built by **Kar** for AI Native Solutions.
